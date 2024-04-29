@@ -102,8 +102,8 @@ In this example we opted to use a simple client/server structure. We seperate th
 
 **Frontend Client**
 
-The frontend is built using Next.js, tailwind and components from Vercel's AI SDK to power the chatbot experience. It also leverages API routes to make calls to the server for fetching document references and context for both the UI and chatbot LLM.
-The client uses localstorage to store workspace information.
+The frontend uses Next.js, tailwind and components from Vercel's AI SDK to power the chatbot experience. It also leverages API routes to make calls to the server to fetch document references and context for both the UI and chatbot LLM.
+The client uses local storage to store workspace information.
 
 **Backend Server**
 
