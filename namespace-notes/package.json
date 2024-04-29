@@ -1,0 +1,15 @@
+{
+  "name": "namespace-notes",
+  "version": "1.0.0",
+  "description": "Sample app for namespace notes",
+  "scripts": {
+    "install:client": "cd client && npm install",
+    "install:server": "cd server/node && npm install",
+    "install:all": "npm run install:client && npm run install:server",
+    "start:client": "cd client && npm start",
+    "start:server": "cd server/node && npm start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
