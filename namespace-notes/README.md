@@ -2,7 +2,7 @@
 ### Multi-tenant Chat with your PDFs sample app
 Unleash the power of conversational AI with your own documents
 
- ![Export-1714412774279](https://github.com/pinecone-io/sample-apps-internal/assets/24496327/ee541e64-2864-42d4-8e49-e780bfb5f68d)
+![image](https://github.com/pinecone-io/sample-apps/assets/24496327/df2c4281-893c-4ce5-ac36-101f4a076d6c)
 
 
 
@@ -96,7 +96,7 @@ You may notice that Digital Ocean Spaces is available as document storage. This 
 
 ## Project structure
 
-![image](https://github.com/pinecone-io/sample-apps-internal/assets/24496327/28d8e8c7-9973-417c-9ee5-9de9a748539f)
+![image](https://github.com/pinecone-io/sample-apps/assets/24496327/5f13972f-386d-4a04-84f7-6e89cb95f124)
 
 In this example we opted to use a simple client/server structure. We seperate the frontend from the backend in this manner in case you'd like to swap either out with a stack of your choice. 
 
