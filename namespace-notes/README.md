@@ -42,11 +42,11 @@ or by following the instructions [here](https://docs.pinecone.io/guides/getting-
 **Requires Node version 20+**
 
 
-To start the project you will need two separate terminal instances, one to run the client and one for the server.
+To start the project, you will need two separate terminal instances, one for running the client and one for the server.
 
 #### Client setup
 
-From the project root directory, run the following comand.
+From the project root directory, run the following command.
 ```bash
 cd client && npm install
 ```
@@ -69,7 +69,7 @@ npm run dev
 
 #### Server setup
 
-From the project root directory, run the following comand.
+From the project root directory, run the following command.
 ```bash
 cd server && npm install
 ```
@@ -371,14 +371,14 @@ Follow our [RAG series for more optimizations](https://www.pinecone.io/learn/ser
 
 **Optimizing chunking strategy**
 
-This project uses a paragraph chunker which often can provide good results for some use cases. Oftentimes the quality of a chunk will play a big role in the quality of the retreival system as a whole.
+This project uses a paragraph chunker, which can provide good results for some use cases. Often, the quality of a chunk will play a significant role in the quality of the retrieval system as a whole.
 
 Learn more about various [chunking strategies](https://www.pinecone.io/learn/chunking-strategies/)
 
 **Enhancing metadata structure**
 
-The metadata in this project consists simply of a reference url to the original content and the particular text snippet. Richer metadata could be extracted from the PDFs to provide additional context to the LLM. 
-This of course assumes a given PDF upload contains additional metadata and that it owuld be useful (page count, title, author(s) etc).
+The metadata in this project consists simply of a reference url to the original content and the particular text snippet. You could extract richer metadata from the PDFs to provide improved context to the LLM. 
+This, of course, assumes a given PDF upload contains additional metadata and that it would be useful (page count, title, author(s), etc).
 
 Read more about [vectorizing structured text](https://www.pinecone.io/learn/structured-data/).
 
