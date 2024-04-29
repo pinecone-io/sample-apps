@@ -91,7 +91,7 @@ Start the server.
 npm run start
 ```
 
-You may notice that Digital Ocean Spaces is available as document storage. This is completly optional the project has a class defined to store document files locally on the server for quick project spin up.
+Note: You may notice that Digital Ocean Spaces is available as document storage. Using Digital Ocean Spaces is entirely optional. The project has a class defined to store document files locally on the server for quick project spin-up.
 
 
 ## Project structure
