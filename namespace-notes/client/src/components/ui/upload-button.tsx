@@ -1,4 +1,6 @@
 'use client';
+
+import { uploadFiles } from '@/app/api/files/file-upload-util';
 import React, { useState, useRef } from 'react';
 import { FaUpload, FaSpinner } from 'react-icons/fa';
 
@@ -12,13 +14,12 @@ import { FaUpload, FaSpinner } from 'react-icons/fa';
 export default function UploadButton({
   workspaceId,
   uploadCompletionCallback,
-  locked = false
-}
-  : {
-    workspaceId: string,
-    uploadCompletionCallback: () => void,
-    locked: boolean
-  }) {
+  locked = false,
+}: {
+  workspaceId: string;
+  uploadCompletionCallback: () => void;
+  locked: boolean;
+}) {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -41,32 +42,27 @@ export default function UploadButton({
       alert('Please select at least one file.');
       return;
     }
+
     setIsUploading(true);
+
     const formData = new FormData();
     formData.append('namespaceId', workspaceId);
     for (let i = 0; i < selectedFiles.length; i++) {
       formData.append('files', selectedFiles[i]);
     }
+
     try {
-      const response = await fetch('/api/files/', {
-        method: 'POST',
-        body: formData,
-      });
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Files uploaded successfully:', data);
-        // Reset the input field after successful upload
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
-        }
-      } else {
-        console.error('Error uploading files:', response.statusText);
-        alert('Failed to upload files. Please try again.');
+      const data = await uploadFiles(formData);
+      console.log('Files uploaded successfully:', data);
+      // Reset the input field after successful upload
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
       }
     } catch (error) {
       console.error('Error uploading files:', error);
       alert('Failed to upload files. Please try again.');
     }
+
     setIsUploading(false);
     uploadCompletionCallback();
   };
@@ -85,12 +81,13 @@ export default function UploadButton({
         onChange={handleFileChange}
         style={{ display: 'none' }}
         multiple
-        ref={fileInputRef} disabled={locked} />
+        ref={fileInputRef}
+        disabled={locked}
+      />
       <div
-        className={`flex items-center justify-center h-10 w-10 p-3 text-white 
-        ${isUploading || locked ? 'bg-gray-400 cursor-not-allowed'
-            : 'bg-[#1C17FF] cursor-pointer hover:bg-blue-600'} 
-        rounded-full focus:outline-none`}
+        className={`flex items-center justify-center h-10 w-10 p-3 text-white ${
+          isUploading || locked ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#1C17FF] cursor-pointer hover:bg-blue-600'
+        } rounded-full focus:outline-none`}
         onClick={handleButtonClick}
       >
         {isUploading ? <FaSpinner className="animate-spin" /> : <FaUpload />}

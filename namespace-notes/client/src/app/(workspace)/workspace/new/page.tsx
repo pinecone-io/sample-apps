@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, FormEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useWorkspaceChatContext, Workspace } from "@/lib/hooks/workspace-chat-context";
 import Spinner from "@/components/ui/spinner";
+import { uploadFiles } from "@/app/api/files/file-upload-util";
 
 const validFileTypes = ["application/pdf"];
 
@@ -45,31 +46,21 @@ export default function NewPage() {
     Array.from(selectedFiles).forEach((file) => formData.append("files", file));
 
     try {
-      const response = await fetch("/api/files/", {
-        method: "POST",
-        body: formData,
-      });
+      const data = await uploadFiles(formData);
+      console.log("Files uploaded successfully:", data);
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Files uploaded successfully:", data);
+      const newWorkspace: Workspace = {
+        id: data.namespaceId,
+        name: title,
+        createdAt: Date.now(),
+        fileUrls: [],
+      };
+      addWorkspace(newWorkspace);
 
-        const newWorkspace: Workspace = {
-          id: data.namespaceId,
-          name: title,
-          createdAt: Date.now(),
-          fileUrls: [],
-        };
-        addWorkspace(newWorkspace);
-
-        router.push(`/workspace/${data.namespaceId}`);
-      } else {
-        console.error("Error uploading files:", response.statusText);
-        alert("Failed to upload files. Please try again.");
-      }
+      router.push(`/workspace/${data.namespaceId}`);
     } catch (error) {
       console.error("Error uploading files:", error);
-      alert("Failed to upload files. Please try again.");
+      alert(`Failed to upload files. Please try again. ${error}`);
     } finally {
       setIsLoading(false);
     }
@@ -85,12 +76,12 @@ export default function NewPage() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="w-full font-light px-0 py-3 mb-4 text-opacity-75 text-6xl bg-transparent border-gray-300 
+            className="w-full font-light px-0 py-3 mb-4 text-opacity-75 text-6xl bg-transparent border-gray-200 
             rounded-md focus:outline-none focus:ring-2 focus:ring-transparent focus:border-transparent text-black"
             placeholder="Topic"
           />
           <div className="flex justify-between items-center pb-4 mb-4 border-b border-gray-300">
-            <span className="text-lg text-gray-600">
+            <span className="text-lg text-gray-400">
               {selectedFiles ? `${selectedFiles.length} file(s) selected` : "Add .pdf file(s)..."}
             </span>
             <label
@@ -110,15 +101,15 @@ export default function NewPage() {
               multiple
             />
           </div>
-          <div className="mt-4 text-sm font-semibold text-[#1C17FF] p-2 mb-5 rounded-lg">
+          <div className="mt-4 text-sm font-medium text-[#1C17FF] py-2 mb-5 rounded-lg">
             <p>
-              This is a public demo, do not upload private files.
-              <br />Upload up to 5 files at a time, no more than 5MB each.
+              This is a public demo, do not upload private information.
+              <br />
             </p>
           </div>
           <button
             type="submit"
-            className="w-full py-3 text-lg font-semibold text-white bg-[#1C17FF] rounded-md 
+            className="w-full py-3 text-lg font-medium text-white bg-[#1C17FF] rounded-md 
             hover:bg-blue-600 focus:outline-none flex items-center justify-center"
             disabled={isLoading}
           >
@@ -129,8 +120,8 @@ export default function NewPage() {
             )}
           </button>
           {isLoading && (
-            <div className="mt-4 text-sm font-bold text-gray-600">
-              Upserting and indexing documents... This may take a few minutes....
+            <div className="mt-4 text-sm font-medium text-gray-500">
+              Upserting and indexing documents... this may take a few minutes....
             </div>
           )}
         </form>

@@ -7,6 +7,8 @@ export interface FetchedFile {
   documentId: string;
 }
 
+export const maxDuration = 600
+
 /**
  * Fetches all file URLs for a given namespace from the backend server.
  *
@@ -87,7 +89,6 @@ export async function POST(req: Request) {
     });
   }
 }
-
 
 /**
  * Deletes a file or a workspace based on the provided parameters.

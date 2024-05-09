@@ -34,18 +34,25 @@ export class DocumentModel {
    */
   async upsertDocument(document: Document, namespaceId: string) {
     // Adjust to use namespaces if you're organizing data that way
-    const namespace = index.namespace(namespaceId); // Adjust as necessary
+    const namespace = index.namespace(namespaceId);
 
     const vectors: PineconeRecord<RecordMetadata>[] = document.chunks.map(
       (chunk) => ({
         id: chunk.id,
         values: chunk.values,
-        metadata: { text: chunk.text, referenceURL: document.documentUrl },
+        metadata: {
+          text: chunk.text,
+          referenceURL: document.documentUrl,
+        },
       })
     );
 
-    // Upsert the chunks into the specified namespace
-    await namespace.upsert(vectors);
+    // Batch the upsert operation
+    const batchSize = 200;
+    for (let i = 0; i < vectors.length; i += batchSize) {
+      const batch = vectors.slice(i, i + batchSize);
+      await namespace.upsert(batch);
+    }
   }
 
   /**
@@ -80,31 +87,28 @@ export class DocumentModel {
       throw error;
     }
   }
-  
+
   /**
    * Deletes the specified chunk IDs from the namespace.
    * @param chunkIds - The IDs of the chunks to delete.
    * @param namespaceId - The ID of the namespace.
    */
   async deleteDocumentChunks(chunkIds: string[], namespaceId: string) {
-    console.log("Deleting Document Chunks")
+    console.log("Deleting Document Chunks");
     const namespace = index.namespace(namespaceId);
     await namespace.deleteMany(chunkIds);
   }
 
   /**
    * Deletes a Pinecone namespace.
-   * 
+   *
    * @param namespaceId - The ID of the namespace to delete.
    * @returns A Promise that resolves when the namespace is deleted successfully.
    */
   async deletePineconeNamespace(namespaceId: string) {
-    console.log("Deleting Workspace")
+    console.log("Deleting Workspace");
     const namespace = index.namespace(namespaceId);
     await namespace.deleteAll();
-    console.log("Workspace deleted from Pinecone successfully")
+    console.log("Workspace deleted from Pinecone successfully");
   }
-
-
-  
 }

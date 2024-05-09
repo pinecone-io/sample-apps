@@ -65,9 +65,9 @@ class DocumentsController {
    * @returns A promise that resolves to the added document.
    */
   async addDocuments(req: Request, res: Response) {
-    // This is effectively the ID of the workspace / tenant
-    let namespaceId = req.body.namespaceId;
     upload(req, res, async (err) => {
+      // This is effectively the ID of the workspace / tenant
+      let namespaceId = req.body.namespaceId;
       if (err instanceof multer.MulterError) {
         console.error("Multer error:", err);
         return res.status(400).json({ message: err.message });

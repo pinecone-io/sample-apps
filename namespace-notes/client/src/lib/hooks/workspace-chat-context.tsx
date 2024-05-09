@@ -17,16 +17,16 @@ export interface WorkspaceChatContextValue {
 
 const defaultValue: WorkspaceChatContextValue = {
   workspaces: [],
-  addWorkspace: () => { },
-  removeWorkspace: () => { },
+  addWorkspace: () => {},
+  removeWorkspace: () => {},
 };
 
 export const WorkspaceChatContext = createContext<WorkspaceChatContextValue>(defaultValue);
-
 export const useWorkspaceChatContext = () => useContext(WorkspaceChatContext);
 
 const defaultWorkspaces: Workspace[] = [
-  { id: 'default', name: 'Richard Feynman Lectures', locked: true, createdAt: 1, fileUrls: ['https://www.feynmanlectures.caltech.edu/fml.html#1'] },
+  { id: 'default', name: 'Richard Feynman Lectures', locked: true, createdAt: 1, fileUrls: [] },
+  { id: 'empty', name: 'Empty Workspace', locked: true, createdAt: 2, fileUrls: [] },
 ];
 
 export const WorkspaceChatProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -35,7 +35,15 @@ export const WorkspaceChatProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const storedWorkspaces = localStorage.getItem('workspaces');
     if (storedWorkspaces) {
-      setWorkspaces(JSON.parse(storedWorkspaces));
+      const parsedWorkspaces: Workspace[] = JSON.parse(storedWorkspaces);
+      const updatedWorkspaces = defaultWorkspaces.map((defaultWorkspace) => {
+        const existingWorkspace = parsedWorkspaces.find((workspace) => workspace.id === defaultWorkspace.id);
+        return existingWorkspace ? { ...existingWorkspace, ...defaultWorkspace } : defaultWorkspace;
+      });
+      const nonDefaultWorkspaces = parsedWorkspaces.filter(
+        (workspace) => !defaultWorkspaces.some((defaultWorkspace) => defaultWorkspace.id === workspace.id)
+      );
+      setWorkspaces([...updatedWorkspaces, ...nonDefaultWorkspaces]);
     } else {
       setWorkspaces(defaultWorkspaces);
       localStorage.setItem('workspaces', JSON.stringify(defaultWorkspaces));

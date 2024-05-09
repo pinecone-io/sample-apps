@@ -130,7 +130,9 @@ export default function Chat({ workspace }: { workspace: Workspace }) {
               promptListRef={promptListRef}
               handleSubmit={handlePromptSubmit}
             />) : (
-            <div className="text-gray-500 text-sm">No documents in this workspace... upload below!</div>
+
+            <div className="text-gray-500 text-sm">{workspace.name === 'Empty Workspace' ? 'This is an example workspace with no uploaded documents for context. Try ask a question about \"Richard Feynman\" or any other workspace.' 
+            : 'No documents in this workspace... upload below!'}</div>
           ))
           }
         </div>
