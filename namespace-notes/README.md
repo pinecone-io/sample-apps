@@ -1,18 +1,20 @@
-# Namespace Notes 
+# Namespace Notes
+
 ### Multi-tenant Chat with your PDFs sample app
+
 Unleash the power of conversational AI with your own documents
 
 ![image](https://github.com/pinecone-io/sample-apps/assets/24496327/df2c4281-893c-4ce5-ac36-101f4a076d6c)
 
-
-
 [View Docs](https://docs.pinecone.io/examples/sample-apps/namespace-notes)
 
 ### Built With
+
 - Pinecone Serverless
 - Vercel AI SDK + OpenAI
 - Next.js + tailwind
 - Node version 20 or higher
+
 ---
 
 ## Running the Sample App
@@ -25,6 +27,7 @@ Use `npx create-pinecone-app` to adopt this project quickly.
 
 Create a Pinecone index for this project.
 The index should have the following properties:
+
 - **dimension**: `1536`
   - You can change this as long as you change the default embedding model.
 - **metric**: `cosine`
@@ -34,24 +37,25 @@ The index should have the following properties:
 
 <div id="pinecone-connect-widget"></div>
 
-You can create the index [in the console](https://app.pinecone.io/organizations/-/projects/-/create-index/serverless), 
+You can create the index [in the console](https://app.pinecone.io/organizations/-/projects/-/create-index/serverless),
 or by following the instructions [here](https://docs.pinecone.io/guides/getting-started/quickstart#4-create-a-serverless-index).
 
 ### Start the project
 
 **Requires Node version 20+**
 
-
 To start the project, you will need two separate terminal instances, one for running the client and one for the server.
 
 #### Client setup
 
 From the project root directory, run the following command.
+
 ```bash
 cd client && npm install
 ```
 
 Make sure you have populated the client `.env` with relevant keys.
+
 ```bash
 # You must first activate a Billing Account here: https://platform.openai.com/account/billing/overview
 # Then get your OpenAI API Key here: https://platform.openai.com/account/api-keys
@@ -60,21 +64,23 @@ OPENAI_API_KEY="your-api-key-here"
 # The URL of the server (only used for development)
 SERVER_URL="http://localhost:4001"
 ```
+
 Start the client.
+
 ```bash
 npm run dev
 ```
 
-
-
 #### Server setup
 
 From the project root directory, run the following command.
+
 ```bash
 cd server && npm install
 ```
 
 Make sure you have populated the server `.env` with relevant keys.
+
 ```bash
 PINECONE_API_KEY="your_pinecone_api_key_here"
 PINECONE_INDEX_NAME="your_pinecone_index_name_here"
@@ -86,19 +92,20 @@ DO_SPACES_SECRET_ACCESS_KEY="your_do_spaces_secret_access_key_here"
 DO_SPACES_ENDPOINT="your_do_spaces_endpoint_here"
 DO_SPACES_BUCKET_NAME="your_do_spaces_bucket_name_here"
 ```
+
 Start the server.
+
 ```bash
 npm run start
 ```
 
 Note: You may notice that Digital Ocean Spaces is available as document storage. Using Digital Ocean Spaces is entirely optional. The project has a class defined to store document files locally on the server for quick project spin-up.
 
-
 ## Project structure
 
 ![image](https://github.com/pinecone-io/sample-apps/assets/24496327/5f13972f-386d-4a04-84f7-6e89cb95f124)
 
-In this example we opted to use a simple client/server structure. We seperate the frontend from the backend in this manner in case you'd like to swap either out with a stack of your choice. 
+In this example we opted to use a simple client/server structure. We seperate the frontend from the backend in this manner in case you'd like to swap either out with a stack of your choice.
 
 **Frontend Client**
 
@@ -110,6 +117,7 @@ The client uses local storage to store workspace information.
 This project uses Node.js and Express to handle file uploads, validation checks, chunking, upsertion, context provision etc. Learn more about the implementation details below.
 
 ### Simple Multi-tenant RAG Methodology
+
 This project uses a basic RAG architecture that achieves multitenancy through the use of namespaces. Files are uploaded to the server where they are chunked, embedded and upserted into Pinecone.
 
 **Tenant Isolation**
@@ -131,8 +139,9 @@ async addDocuments(req: Request, res: Response) {
 
 **Chunking**
 
-This project uses a basic paragraph chunking approach. We use `pdf-parse` to stream and parse pdf content and leverage a best effort paragraph chunking strategy with a defined `minChunkSize` and `maxChunkSize` to 
-account for documents with longer or shorter paragraph sizes. This helps us provide sizable content chunks for our Pinecone record metadata which will later be used by the LLM during retreival. 
+This project uses a basic paragraph chunking approach. We use `pdf-parse` to stream and parse pdf content and leverage a best effort paragraph chunking strategy with a defined `minChunkSize` and `maxChunkSize` to
+account for documents with longer or shorter paragraph sizes. This helps us provide sizable content chunks for our Pinecone record metadata which will later be used by the LLM during retreival.
+
 ```typescript
 /**
  * Splits a given text into chunks of 1 to many paragraphs.
@@ -188,9 +197,9 @@ function chunkTextByMultiParagraphs(
 
 **Embedding**
 
-Once we have our chunks we embed them in batches using [`text-embedding-3-large`](https://www.pinecone.io/models/text-embedding-3-large/)
-```typescript
+Once we have our chunks we embed them in batches using [`text-embedding-3-small`](https://www.pinecone.io/models/text-embedding-3-small/)
 
+```typescript
 /**
  * Embed a piece of text using an embedding model or service.
  * This is a placeholder and needs to be implemented based on your embedding solution.
@@ -207,7 +216,7 @@ export async function embedChunks(chunks: string[]): Promise<any> {
   });
   try {
     const response = await openai.embeddings.create({
-      model: "text-embedding-3-large",
+      model: "text-embedding-3-small",
       input: chunks,
       encoding_format: "float",
       dimensions: 1536,
@@ -224,7 +233,7 @@ export async function embedChunks(chunks: string[]): Promise<any> {
 
 In order to store multiple documents within a particular namespace we need a convention that allows us to target the chunks belonging to a particular document.
 
-We do this through id prefixing. We generate a document Id for each uploaded document, and then before uposertion we assign it as a prefix to the particular chunk id. 
+We do this through id prefixing. We generate a document Id for each uploaded document, and then before uposertion we assign it as a prefix to the particular chunk id.
 The below example uses the document id with an appended chunk id separated by a '`:`' symbol.
 
 ```typescript
@@ -238,38 +247,46 @@ The below example uses the document id with an appended chunk id separated by a 
 });
 ```
 
-This comes in handy for targeted document updates and deletions. 
+This comes in handy for targeted document updates and deletions.
 
 **Upsertion**
 
 Lastly, we upsert our embeddings to the Pinecone Namespace associated with the tenant in the form of a `PineconeRecord`.
-This allows us to provide the reference text and url as metadata for use by our retreival system. 
+This allows us to provide the reference text and url as metadata for use by our retreival system.
+
 ```typescript
-  /**
+    /**
    * Upserts a document into the specified Pinecone namespace.
    * @param document - The document to upsert.
    * @param namespaceId - The ID of the namespace.
    */
   async upsertDocument(document: Document, namespaceId: string) {
     // Adjust to use namespaces if you're organizing data that way
-    const namespace = index.namespace(namespaceId); // Adjust as necessary
+    const namespace = index.namespace(namespaceId);
 
     const vectors: PineconeRecord<RecordMetadata>[] = document.chunks.map(
       (chunk) => ({
         id: chunk.id,
         values: chunk.values,
-        metadata: { text: chunk.text, referenceURL: document.documentUrl },
+        metadata: {
+          text: chunk.text,
+          referenceURL: document.documentUrl,
+        },
       })
     );
 
-    // Upsert the chunks into the specified namespace
-    await namespace.upsert(vectors);
+    // Batch the upsert operation
+    const batchSize = 200;
+    for (let i = 0; i < vectors.length; i += batchSize) {
+      const batch = vectors.slice(i, i + batchSize);
+      await namespace.upsert(batch);
+    }
   }
 ```
 
 **Context**
 
-When a user asks a question via the frontend chat component, the Vercel AI SDK leverages the `/chat` endpoint for retrieval. 
+When a user asks a question via the frontend chat component, the Vercel AI SDK leverages the `/chat` endpoint for retrieval.
 We then send the `top_k` most similar results back from Pinecone via our context route.
 
 We populate a `CONTEXT BLOCK` that is wrapped with system prompt instructions for our chosen LLM to take advantage of in the response output.
@@ -318,6 +335,7 @@ export async function createPrompt(messages: any[], namespaceId: string) {
 
 To delete a document from a particular workspace, we need to perform a targeted deletion of the RAG document. Luckily, we can take advantage of the id prefixing strategy we employed earlier to perform a deletion of a specific document.
 We use our `documentId:` to identify all the chunks associated with a particular document and then we perform deletions until we have successfully deleted all document chunks.
+
 ```typescript
 // We retreive a paginated list of chunks from the namespace
 const listResult = await namespace.listPaginated({
@@ -336,7 +354,6 @@ async deleteDocumentChunks(chunkIds: string[], namespaceId: string) {
 }
 ```
 
-
 **Workspace Deletion** (Offboarding)
 
 This is even simpler to achieve. If we have a the workspace / namespaceId at our disposal, we can simply call `deleteAll()` on the relevant namespace.
@@ -344,7 +361,7 @@ This is even simpler to achieve. If we have a the workspace / namespaceId at our
 ```typescript
  /**
    * Deletes a Pinecone namespace.
-   * 
+   *
    * @param namespaceId - The ID of the namespace to delete.
    * @returns A Promise that resolves when the namespace is deleted successfully.
    */
@@ -358,13 +375,13 @@ This is even simpler to achieve. If we have a the workspace / namespaceId at our
 
 ---
 
-## Further Optimizations for the RAG pipeline 
+## Further Optimizations for the RAG pipeline
 
 This is a relatively simple RAG pipeline - in practice there are improvements that could be made depending on a particular set of requirements.
 
 **Using Rerankers**
 
-For example, a reranker could be used in order to provide the most relevant set of retrieved results from Pinecone to the LLM. 
+For example, a reranker could be used in order to provide the most relevant set of retrieved results from Pinecone to the LLM.
 A reranker could allow us to increase the `top_k` requested from Pinecone significantly and then constrain the output to a highly relevant set of records ordered by relevance all while abiding by the context length restrictions of the LLM.
 
 Follow our [RAG series for more optimizations](https://www.pinecone.io/learn/series/rag/)
@@ -377,14 +394,12 @@ Learn more about various [chunking strategies](https://www.pinecone.io/learn/chu
 
 **Enhancing metadata structure**
 
-The metadata in this project consists simply of a reference url to the original content and the particular text snippet. You could extract richer metadata from the PDFs to provide improved context to the LLM. 
+The metadata in this project consists simply of a reference url to the original content and the particular text snippet. You could extract richer metadata from the PDFs to provide improved context to the LLM.
 This, of course, assumes a given PDF upload contains additional metadata and that it would be useful (page count, title, author(s), etc).
 
 Read more about [vectorizing structured text](https://www.pinecone.io/learn/structured-data/).
 
-
 ## Troubleshooting
 
-Experiencing any issues with the sample app? 
+Experiencing any issues with the sample app?
 [Submit an issue, create a PR](https://github.com/pinecone-io/sample-apps/), or post in our [community forum](https://community.pinecone.io)!
-
