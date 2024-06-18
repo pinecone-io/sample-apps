@@ -1,0 +1,122 @@
+{
+  "documents": [
+    {
+      "filename": "us_vs_nixon.pdf",
+      "title": "United States v. Nixon",
+      "plaintiff": "United States",
+      "defendant": "Nixon",
+      "date": "1974",
+      "topic": "Executive Privilege",
+      "outcome": "Ruling against Nixon"
+    },
+    {
+      "filename": "gibbons_vs_ogden.pdf",
+      "title": "Gibbons v. Ogden",
+      "plaintiff": "Gibbons",
+      "defendant": "Ogden",
+      "date": "1824",
+      "topic": "Interstate Commerce",
+      "outcome": "Ruling for Gibbons"
+    },
+    {
+      "filename": "marbury_vs_madison.pdf",
+      "title": "Marbury v. Madison",
+      "plaintiff": "Marbury",
+      "defendant": "Madison",
+      "date": "1803",
+      "topic": "Judicial Review",
+      "outcome": "Established judicial review"
+    },
+    {
+      "filename": "bush_vs_gore.pdf",
+      "title": "Bush v. Gore",
+      "plaintiff": "Bush",
+      "defendant": "Gore",
+      "date": "2000",
+      "topic": "Winner of 2000 Presidential election",
+      "outcome": "Ruling for Bush"
+    },
+    {
+      "filename": "miranda_vs_arizona.pdf",
+      "title": "Miranda v. Arizona",
+      "plaintiff": "Miranda",
+      "defendant": "Arizona",
+      "date": "1966",
+      "topic": "Right against self-incrimination",
+      "outcome": "Ruling for Miranda"
+    },
+    {
+      "filename": "us_vs_lopez.pdf",
+      "title": "United States v. Lopez",
+      "plaintiff": "United States",
+      "defendant": "Lopez",
+      "date": "1995",
+      "topic": "Congress's power under the Commerce Clause",
+      "outcome": "Ruling for Lopez"
+    },
+    {
+      "filename": "gideon_vs_wainwright.pdf",
+      "title": "Gideon v. Wainwright",
+      "plaintiff": "Gideon",
+      "defendant": "Wainwright",
+      "date": "1963",
+      "topic": "Right to Counsel",
+      "outcome": "Guaranteed the right to legal counsel"
+    },
+    {
+      "filename":"roper_vs_simmons.pdf",
+      "title":"Roper v. Simmons",
+      "plaintiff":"Roper",
+      "defendant":"Simmons",
+      "date":"2005",
+      "topic":"Age Restriction",
+      "outcome":"Ruling against Roper"
+    }, 
+    {
+      "filename":"nytimes_vs_us.pdf",
+      "title":"New York Times v. United States",
+      "plaintiff":"New York Times",
+      "defendant":"United States",
+      "date":"1971",
+      "topic":"first amendment freedom of the Press",
+      "outcome":"Ruling against the Nixon administration"
+    }, 
+    {
+      "filename":"baker_vs_carr.pdf",
+      "title":"Baker v. Carr",
+      "plaintiff":"Baker",
+      "defendant":"Carr",
+      "date":"1962",
+      "topic":"",
+      "outcome":""
+    },
+    {
+      "filename":"mapp_vs_ohio.pdf",
+      "title":"Mapp v. Ohio",
+      "plaintiff":"Mapp",
+      "defendant":"Ohio",
+      "date":"1961",
+      "topic":"Judicial Review",
+      "outcome":"Strengthened Fourth Amendment protections"
+    },
+    {
+      "filename":"dc_vs_heller.pdf",
+      "title":"District of Columbia v. Heller",
+      "plaintiff":"District of Columbia",
+      "defendant":"Heller",
+      "date":"2008",
+      "topic":"Individual firearms rights",
+      "outcome":"Strengthened second Amendment protections"
+    }, 
+    {
+      "filename":"tinker_vs_desmoins.pdf",
+      "title":"Tinker v. Desmoins",
+      "plaintiff":"Tinker",
+      "defendant":"Desmoins",
+      "date":"2008",
+      "topic":"Student free speech within schools",
+      "outcome":"Strengthened first Amendment protections"
+    }
+  ]
+}
+
