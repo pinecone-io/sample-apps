@@ -1,0 +1,46 @@
+{
+  "name": "Legal semantic search sample app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@heroicons/react": "^1.0.6",
+    "@langchain/community": "^0.2.4",
+    "@langchain/core": "^0.2.4",
+    "@langchain/openai": "^0.0.34",
+    "@langchain/pinecone": "^0.0.7",
+    "@langchain/textsplitters": "^0.0.2",
+    "@pinecone-database/pinecone": "^2.2.1",
+    "@types/uuid": "^9.0.8",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "langchain": "^0.2.3",
+    "lucide-react": "^0.381.0",
+    "next": "14.2.3",
+    "openai": "link:langchain/llms/openai",
+    "p-limit": "^5.0.0",
+    "pdf-parse": "^1.1.1",
+    "peggy": "^4.0.2",
+    "react": "^18",
+    "react-dom": "^18",
+    "tailwind-merge": "^2.3.0",
+    "tailwindcss-animate": "^1.0.7",
+    "uuid": "^9.0.1",
+    "voyage": "link:langchain/embeddings/voyage"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.3",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
