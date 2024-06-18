@@ -22,7 +22,7 @@
     "langchain": "^0.2.3",
     "lucide-react": "^0.381.0",
     "next": "14.2.3",
-    "openai": "link:langchain/llms/openai",
+    "openai": "file:langchain/llms/openai",
     "p-limit": "^5.0.0",
     "pdf-parse": "^1.1.1",
     "peggy": "^4.0.2",
@@ -31,7 +31,7 @@
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^9.0.1",
-    "voyage": "link:langchain/embeddings/voyage"
+    "voyage": "file:langchain/embeddings/voyage"
   },
   "devDependencies": {
     "@types/node": "^20",
