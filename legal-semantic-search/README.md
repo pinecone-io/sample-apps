@@ -54,7 +54,7 @@ Log into [the Voyage AI dashboard](https://dash.voyageai.com/) and create a new 
 From the project root directory, run the following command.
 
 ```bash
-cd legal-semantic-search && npm install 
+cd legal-semantic-search && npm install --force
 ```
 
 Make sure you have populated the client `.env` with relevant keys.
