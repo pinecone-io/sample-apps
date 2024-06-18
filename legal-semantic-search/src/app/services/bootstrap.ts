@@ -50,7 +50,7 @@ const batchUpserts = async (index: any, vectors: any[], batchSize: number = 50) 
 
 export const initiateBootstrapping = async (targetIndex: string) => {
 
-  const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
+  const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://localhost:${process.env.PORT}`;
 
   // Initiate a POST request with fetch to the /ingest endpoint, in order to begin 
   // chunking, embedding and upserting documents that will form the knowledge base
