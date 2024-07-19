@@ -1,0 +1,9 @@
+fastapi==0.100.1
+uvicorn[standard]==0.23.2
+pinecone-client==4.1.0
+pydantic==2.7.1
+requests==2.31.0
+google-auth==2.29.0
+google-auth-oauthlib==1.2.0
+google-auth-httplib2==0.2.0
+python-multipart

@@ -1,0 +1,24 @@
+# misc
+.DS_Store
+*.pem
+node_modules
+.next
+.vscode
+
+# local env files
+.env*.production
+.env*.development
+.env
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
