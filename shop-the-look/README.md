@@ -1,6 +1,6 @@
 # 👘  Shop The Look 
 
-## An advanced multimodal search engine for finding your new favorite outfit
+## A multimodal search engine for finding your new favorite outfit
 
 https://github.com/user-attachments/assets/8a0f7d34-0768-4ea3-a21f-48ab93635a1e
 
@@ -19,9 +19,9 @@ https://github.com/user-attachments/assets/8a0f7d34-0768-4ea3-a21f-48ab93635a1e
 
 ## 💃🏻 Overview
 
-Shop The Look is an advanced multimodal search engine for finding outfit inspiration built using Pinecone Serverless, Google's Multimodal Embedding Model, and assets from Pexels. 
+Shop The Look is a multimodal search engine for finding outfit inspiration built using Pinecone Serverless, Google's Multimodal Embedding Model, and assets from Pexels. 
 
-This sample application is a great starting point for you to build your own multimodal search engine for your use cases. Simply clone it, run it locally or deploy it to Vercel, and customize it to make it your own.
+This sample application is a great starting point for you to build your own multimodal search engine for your use cases. Clone it, run it locally or deploy it to Vercel, and customize it to make it your own.
 
 ## 💡 Features
 
@@ -42,7 +42,7 @@ We offer two installation methods for Shop The Look:
 
 #### Not sure which installation method to use? 
 
-![Installation Flowchart](./assets/installation-flowchart.png)
+![installation-flowchart](https://github.com/user-attachments/assets/a3229ff1-7ec8-4d88-ac36-9ddb3284c4b1)
 
 ## ☁️ Demo Deployment (2 minutes)
 
@@ -63,17 +63,18 @@ For developers who want to quickly deploy and test the Shop The Look application
 
 ### 💻 Local Demo Deployment
 
+#### One-click deployment (15 seconds)
+
+```bash
+npx create-pinecone-app@latest --template shop-the-look
+```
+
+#### Manual setup (1 minutes)
+
 1. Clone the repository:
    ```bash
-   git clone https://github.com/pinecone-io/sample-apps-internal.git
-   cd sample-apps-internal/shop-the-look
-   ```
-
-2. Install frontend dependencies:
-   ```bash
-   npm install
-   # or
-   yarn install
+   git clone https://github.com/pinecone-io/sample-apps.git
+   cd sample-apps/shop-the-look
    ```
 
 3. Start the frontend server:
@@ -85,14 +86,14 @@ For developers who want to quickly deploy and test the Shop The Look application
 
 5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 🚀 Vercel Demo Deployment
+### 🚀 Vercel Demo Deployment (2 minutes)
 
-TODO: npx create-next-app@latest --app https://github.com/pinecone-io/sample-apps-internal.git
+#### Manual setup (2 minutes)
 
 1. Clone the repository to your GitHub account.
    ```bash
-   git clone https://github.com/pinecone-io/sample-apps-internal.git
-   cd sample-apps-internal/shop-the-look
+   git clone https://github.com/pinecone-io/sample-apps.git
+   cd sample-apps/shop-the-look
    ```
 
 2. Log in to your Vercel account and click "New Project".
@@ -135,8 +136,8 @@ For developers who want to deploy a fully customizable Shop The Look application
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/pinecone-io/sample-apps-internal.git
-   cd sample-apps-internal/shop-the-look
+   git clone https://github.com/pinecone-io/sample-apps.git
+   cd sample-apps/shop-the-look
    ```
 
 2. Install frontend dependencies:
@@ -168,6 +169,12 @@ Google Cloud setup allows you to use Vertex AI, a machine learning platform that
    - Vertex AI API
    - Cloud Storage API
 
+![image](https://github.com/user-attachments/assets/8c7cb8d5-16f2-40f5-8070-63b8d0f2d025)
+
+![image](https://github.com/user-attachments/assets/d6470b77-748c-4fb3-9382-9c3e798f7ef6)
+
+![image](https://github.com/user-attachments/assets/9ecf7c8e-6640-4e4b-817c-84993d921f8e)
+
 3. Create a service account:
    - Go to "IAM & Admin" > "Service Accounts"
    - Click "Create Service Account"
@@ -175,11 +182,21 @@ Google Cloud setup allows you to use Vertex AI, a machine learning platform that
      - Vertex AI User
      - Storage Object Viewer
 
+![image](https://github.com/user-attachments/assets/a51d8524-b9a7-463e-82aa-08d7dad6ed36)
+
+![image](https://github.com/user-attachments/assets/1c00b14b-c846-4fe7-9c92-8320a306b8fd)
+
+![image](https://github.com/user-attachments/assets/e9c4a251-2c4d-4760-9c40-ef10cf9d2aa0)
+
 4. Generate a JSON key for the service account:
    - Click on the service account
    - Go to the "Keys" tab
    - Click "Add Key" > "Create new key"
-   - Choose JSON format and download the key file
+   - Choose JSON format and download the key file. Save this somewhere safe. 
+
+![image](https://github.com/user-attachments/assets/a24df002-12df-4678-aa91-4f1f3de25c25)
+
+![image](https://github.com/user-attachments/assets/5116b69b-8eb8-4fc8-bba6-883d144a3b03)
 
 5. Encode the JSON key file to base64:
    ```bash
@@ -200,11 +217,16 @@ This step allows you to use Pinecone Serverless, our very own serverless vector 
 
 1. Sign up for a [Pinecone account](https://www.pinecone.io/?utm_source=shop-the-look&utm_medium=referral).
 2. Create a new Pinecone Serverless Index with the following settings:
-   - Dimensions: 1408 (for Google's Multimodal Embedding Model)
-   - Metric: Cosine
-   - TODO: other stuff + screenshots
+   1. Dimensions: `1408` (for Google's Multimodal Embedding Model)
+   2. Metric: `cosine`
+   3. Choose your cloud provider of choice
+   4. Choose your region of choice
+  
+   ![image](https://github.com/user-attachments/assets/3eb70b3c-cacd-404f-8b2f-64db8f6a5846)
 
 3. Note down your Pinecone API key, you will need this to connect to your Pinecone index.
+
+![image](https://github.com/user-attachments/assets/71536814-5f2e-41f5-be67-8dc6c3ed30c5)
 
 </details>
 
@@ -232,7 +254,7 @@ NEXT_PUBLIC_DEVELOPMENT_URL=http://localhost:8000
 
 2. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-3. *Optional*: The backend API server is available at [http://localhost:8000/api/](http://localhost:8000/api/), simply send your REST requests to this endpoint to interact with the backend API.
+3. *Optional*: The backend API server is available at [http://localhost:8000/api/](http://localhost:8000/api/), send your REST requests to this endpoint to interact with the backend API.
 
 ### 🚀 Vercel Full Deployment (5 minutes)
 
@@ -286,7 +308,7 @@ In order to make Shop The Look your own, you need to upload your assets and modi
 
 ### Upload, embed, and upsert assets (~15 minutes)
 
-1. Open the [Image and Video Embedding Processors](https://github.com/pinecone-io/sample-apps-internal/blob/main/shop-the-look/scripts/README.md) folder (located at [`scripts/README.md`](https://github.com/pinecone-io/sample-apps-internal/blob/main/shop-the-look/scripts/README.md)). 
+1. Open the [Image and Video Embedding Processors](https://github.com/pinecone-io/sample-apps/blob/main/shop-the-look/scripts/README.md) folder (located at [`scripts/README.md`](https://github.com/pinecone-io/sample-apps/blob/main/shop-the-look/scripts/README.md)). 
 
 2. Read the README and use the two scripts to upload image and videos respectively.
 
@@ -350,7 +372,7 @@ For **Vercel** deployment issues, check:
 - [Vercel build logs](https://vercel.com/docs/deployments/logs)
 - Ensure all [environment variables](https://vercel.com/docs/projects/environment-variables) are correctly set in the Vercel project settings
 
-For **other** issues, please create an issue in the [GitHub repository](https://github.com/pinecone-io/sample-apps-internal/issues).
+For **other** issues, please create an issue in the [GitHub repository](https://github.com/pinecone-io/sample-apps/issues).
 
 ## ⚠️ Service Limitations
 
@@ -364,12 +386,12 @@ There are some service limitations to be aware of.
 - Multimodal Embedding Model image upload is limited to 20 MB, and the image is resized to 512x512 pixels prior to embedding ([source](https://cloud.google.com/vertex-ai/generative-ai/docs/embeddings/get-multimodal-embeddings#api-limits))
 - Some users may encounter authentication issues with the Google Cloud SDK when getting embeddings for videos stored in Google Cloud Storage using `gs://` URIs. These issues will appear as `StatusCode.UNAUTHENTICATED` and `Video embedding failed with the following error: Deadline` errors. This is a known issue with the Google Cloud SDK, and a potential solution can be found in this [Stack Overflow thread](https://stackoverflow.com/a/78618078/1913389). If this does not fix your issue, you will need to provide the video as a base64-encoded byte string (`video.bytesBase64Encoded`) - further instructions found [here](https://cloud.google.com/vertex-ai/generative-ai/docs/embeddings/get-multimodal-embeddings#vid-embedding).
 - Multimodal Embedding Model base64-encoded string video upload is limited to 27,000,000 chars ([not documented](https://cloud.google.com/vertex-ai/generative-ai/docs/embeddings/get-multimodal-embeddings#api-limits), but you will error) 
-- Vercel Python Serverless Functions cannot exceed 250 MB in size ([source](https://vercel.com/docs/functions/limitations#vercel-functions-limitations)), so if you use a large Python library like `vertex-ai`, you will error. You will need to query Vertex AI's REST API directly, like in [/api/v1/endpoints](https://github.com/pinecone-io/sample-apps-internal/tree/main/shop-the-look/api/v1/endpoints)
+- Vercel Python Serverless Functions cannot exceed 250 MB in size ([source](https://vercel.com/docs/functions/limitations#vercel-functions-limitations)), so if you use a large Python library like `vertex-ai`, you will error. You will need to query Vertex AI's REST API directly, like in [/api/v1/endpoints](https://github.com/pinecone-io/sample-apps/tree/main/shop-the-look/api/v1/endpoints)
 - When extending the FastAPI backend, requests need to be mapped to `/api/:path*/` as this uses `next.config.js` rewrites. More information in the [Next.js FastAPI](https://github.com/digitros/nextjs-fastapi) Starter from Vercel. ([source](https://vercel.com/docs/functions/limitations#vercel-functions-limitations))
 
 ## 📝 Contributing
 
-Any useful contributions are welcome, please create a [pull request](https://github.com/pinecone-io/sample-apps-internal/pulls) or [issue](https://github.com/pinecone-io/sample-apps-internal/issues). 
+Any useful contributions are welcome, please create a [pull request](https://github.com/pinecone-io/sample-apps/pulls) or [issue](https://github.com/pinecone-io/sample-apps/issues). 
 
 ## 🔮 Built With
 

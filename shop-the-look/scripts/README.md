@@ -16,7 +16,7 @@ This folder contains two scripts:
 
 # Setup
 
-The setup process mirrors the [Setup & Installation](https://github.com/pinecone-io/sample-apps-internal/blob/main/shop-the-look/README.md) instructions in [Shop The Look's README](https://github.com/pinecone-io/sample-apps-internal/blob/main/shop-the-look/README.md), so for additional detail, please consult that documentation first. 
+The setup process mirrors the [Setup & Installation](https://github.com/pinecone-io/sample-apps/blob/main/shop-the-look/README.md) instructions in [Shop The Look's README](https://github.com/pinecone-io/sample-apps/blob/main/shop-the-look/README.md), so for additional detail, please consult that documentation first. 
 
 Here's a short summary:
 

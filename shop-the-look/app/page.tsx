@@ -7,9 +7,13 @@ import type VideoJsPlayer from 'video.js/dist/types/player';
 import 'video.js/dist/video-js.css';
 import Layout from './layout';
 import './styles.css';
-import { SVGProps } from 'react';
 import { track } from '@vercel/analytics';
 import Head from 'next/head';
+
+// Components
+import { PhotoFrameIcon, MagnifyingGlassIcon } from './components/Icons';
+import Footer from './components/Footer';
+import { handleFileUpload } from './components/FileUploadHandler';
 
 // Handles Python backend API URL based on the environment
 const API_URL = (() => {
@@ -232,163 +236,27 @@ export default function Home() {
     setShowSuggestions(value.trim() !== '');
   };
 
-  const MAX_FILE_SIZE = 4500000; // 4.5 MB Vercel upload limit
-
-  // Vercel's Serverless Functions does not allow file uploads larger than 4.5 MB
-  // This function compresses the image to a smaller size if it exceeds the limit
-  const cropImageToCenter = (file: File): Promise<Blob> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          const size = 512;
-          canvas.width = size;
-          canvas.height = size;
-
-          if (ctx) {
-            let sx, sy, sWidth, sHeight;
-            if (img.width > img.height) {
-              sHeight = img.height;
-              sWidth = sHeight;
-              sx = (img.width - sWidth) / 2;
-              sy = 0;
-            } else {
-              sWidth = img.width;
-              sHeight = sWidth;
-              sx = 0;
-              sy = (img.height - sHeight) / 2;
-            }
-
-            ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, size, size);
-            canvas.toBlob((blob) => {
-              if (blob) {
-                resolve(blob);
-              } else {
-                reject(new Error('Failed to crop image'));
-              }
-            }, file.type);
-          } else {
-            reject(new Error('Failed to get canvas context'));
-          }
-        };
-        img.onerror = () => {
-          reject(new Error('Failed to load image'));
-        };
-        img.src = event.target?.result as string;
-      };
-      reader.onerror = () => {
-        reject(new Error('Failed to read file'));
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const handleFileUpload = async (file: File) => {
+  const handleFileUploadWrapper = async (file: File) => {
     resetSearchState();
-
-    const isImage = file.type.startsWith('image/');
-    const isVideo = file.type.startsWith('video/');
-    const endpoint = isImage ? `${API_URL}/api/search/image` : `${API_URL}/api/search/video`;
-    setSearchType(isImage ? 'image' : 'video');
-
-    if (!isImage && !isVideo) {
-      setErrorMessage('Oops, you uploaded an unsupported file type. Please upload an image or video.');
-      return;
-    }
-
-    if (isImage) {
-      const allowedFormats = ['bmp', 'gif', 'jpeg', 'png', 'jpg'];
-      const fileExtension = file.name.split('.').pop()?.toLowerCase();
-      if (!fileExtension || !allowedFormats.includes(fileExtension)) {
-        setErrorMessage(`We don't support this image format: ${fileExtension || 'unknown'}. Please upload an image in one of the following formats: ${allowedFormats.join(', ')}.`);
-        return;
-      }
-    }
-
-    // Vercel's Serverless Functions does not allow file uploads larger than 4.5 MB
-    if (isVideo && file.size > 4500000) {
-      setErrorMessage(`We're sorry, the video file is too large. Maximum allowed size is 4.5 MB due to hosting limitations. Your file is ${(file.size / (1024 * 1024)).toFixed(2)} MB.`);
-      return;
-    }
-
-    setIsUploading(true);
-    setIsSearchComplete(false);
-    setSearchTime(null);
-    setErrorMessage(null);
-    setIsLoadingResults(true);
-    const startTime = Date.now();
-
-    try {
-      let fileToUpload: File | Blob = file;
-
-      if (isImage && file.size > MAX_FILE_SIZE) {
-        const compressedBlob = await cropImageToCenter(file);
-        fileToUpload = new File([compressedBlob], file.name, { type: file.type });
-      }
-
-      const formData = new FormData();
-      formData.append('file', fileToUpload);
-
-      const response = await axios.post(endpoint, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        }
-      });
-
-      const endTime = Date.now();
-      setResults(response.data.results);
-      setSearchTime(endTime - startTime);
-      track('file_uploaded', {
-        fileType: isImage ? 'image' : 'video',
-        fileName: file.name,
-        originalSize: file.size,
-        compressedSize: fileToUpload.size
-      });
-      setIsSearchComplete(true);
-      setQuery('');
-      setIsInputEmpty(true);
-    } catch (error) {
-
-      track('search_error', {
-        searchType,
-        errorMessage: error instanceof Error ? error.message : 'Unknown error'
-      });
-      console.error('Error during file upload:', error);
-
-      if (axios.isAxiosError(error)) {
-        track('search_error', {
-          searchType,
-          errorMessage: error instanceof Error ? error.message : 'Unknown error'
-        });
-
-        if (error.response?.status === 413) {
-          if (file.size > MAX_FILE_SIZE) {
-            setErrorMessage(`We're very sorry, but we can't upload files larger than 4.5 MB due to hosting limitations. Your file is ${(file.size / (1024 * 1024)).toFixed(1)} MB. Please try a smaller file or compress this one.`);
-            return;
-          }
-        } else if (error.response) {
-          setErrorMessage(`Oops! ${error.message}`);
-        } else {
-          setErrorMessage('Oops! An unexpected error occurred. Our engineers have been notified.');
-        }
-      } else {
-        console.error('Unknown error:', error);
-        setErrorMessage('Oops! An unexpected error occurred. Our engineers have been notified.');
-      }
-    } finally {
-      setIsSearching(false);
-      setIsUploading(false);
-      setIsLoadingResults(false);
-    }
+    await handleFileUpload(file, {
+      API_URL,
+      setSearchType,
+      setErrorMessage,
+      setIsUploading,
+      setIsSearchComplete,
+      setSearchTime,
+      setIsLoadingResults,
+      setResults,
+      setQuery,
+      setIsInputEmpty,
+      setIsSearching
+    });
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       track('file_selected');
-      await handleFileUpload(e.target.files[0]);
+      await handleFileUploadWrapper(e.target.files[0]);
     }
   };
 
@@ -411,7 +279,7 @@ export default function Home() {
 
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       track('file_dropped');
-      await handleFileUpload(e.dataTransfer.files[0]);
+      await handleFileUploadWrapper(e.dataTransfer.files[0]);
     }
   };
 
@@ -610,64 +478,8 @@ export default function Home() {
             )}
           </div>
         </div>
-        <div className="w-full mt-auto py-4 text-center text-gray-500 text-sm">
-          <p>
-            Built with{' '}
-            <a href="https://www.pinecone.io/?utm_source=shop-the-look&utm_medium=referral" target="_blank" rel="noopener noreferrer" className="text-indigo-800 hover:underline">
-              Pinecone
-            </a>
-            ,{' '}
-            <a href="https://cloud.google.com/vertex-ai/generative-ai/docs/embeddings/get-multimodal-embeddings" target="_blank" rel="noopener noreferrer" className="text-indigo-800 hover:underline">
-              Google Multimodal Embedding Model
-            </a>
-            , and{' '}
-            <a href="https://www.pexels.com/" target="_blank" rel="noopener noreferrer" className="text-indigo-800 hover:underline">
-              Pexels
-            </a>
-          </p>
-        </div>
+        <Footer />
       </div>
     </Layout>
-  );
-}
-
-function PhotoFrameIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-      <circle cx="8.5" cy="8.5" r="1.5" />
-      <polyline points="21 15 16 10 5 21" />
-    </svg>
-  );
-}
-
-function MagnifyingGlassIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
   );
 }
