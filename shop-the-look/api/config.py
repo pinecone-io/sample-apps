@@ -7,9 +7,9 @@ from google.auth.transport.requests import Request
 class Settings:
     def __init__(self):
         # Google services
-        self.project_id = 'my-multimodal-search-project'
-        self.location = 'us-central1'
-        self.gcs_bucket_name = 'multi-modal-sample-app'
+        self.project_id = os.getenv('GOOGLE_CLOUD_PROJECT_ID')
+        self.location = os.getenv('GOOGLE_CLOUD_PROJECT_LOCATION')
+        self.gcs_bucket_name = os.getenv('GOOGLE_CLOUD_STORAGE_BUCKET_NAME')
         self.google_credentials_base64 = os.getenv('GOOGLE_CREDENTIALS_BASE64')
         self.credentials_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS') or '/tmp/google-credentials.json'
         self.access_token = None
@@ -18,8 +18,8 @@ class Settings:
 
         # Pinecone services
         self.api_key = os.getenv('PINECONE_API_KEY')
-        self.index_name = 'mmsa-pexels-clothing'
-        self.k = 20 # top-k results
+        self.index_name = os.getenv('PINECONE_INDEX_NAME')
+        self.k = int(os.getenv('PINECONE_TOP_K')) 
     
     def get_credentials(self):
         if self.credentials:

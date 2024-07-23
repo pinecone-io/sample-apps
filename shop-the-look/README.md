@@ -46,9 +46,9 @@ We offer two installation methods for Shop The Look:
 
 ## ☁️ Demo Deployment (2 minutes)
 
-*Note: This is for **demonstration purposes only**.*
+*Note: The demo deployment is for **demonstration purposes only**.*
 
-For developers who want to quickly deploy and test the Shop The Look application without setting up their own backend services or supply their own image/video assets, we offer a demo deployment option that includes over 45,000 royalty-free images and videos. This method allows you to deploy only the front-end to Vercel or run it locally, while utilizing our hosted backend API (which we have set up with all assets, Pinecone Serverless index, and Google Cloud Vertex AI).
+For developers who want to quickly deploy and test the Shop The Look application without setting up their own backend services or supply their own image/video assets, we offer a demo deployment option that includes over 45,000 royalty-free images and videos. This method allows you to deploy the front-end locally, while utilizing our hosted backend API (which we have set up with all assets, Pinecone Serverless index, and Google Cloud Vertex AI).
 
 ### Benefits
 - No need to set up Pinecone or Google Cloud accounts
@@ -59,7 +59,6 @@ For developers who want to quickly deploy and test the Shop The Look application
 ### Prerequisites
 - Node.js (v14 or later)
 - npm or yarn
-- A Vercel account (for Vercel deployment)
 
 ### 💻 Local Demo Deployment
 
@@ -69,49 +68,7 @@ For developers who want to quickly deploy and test the Shop The Look application
 npx create-pinecone-app@latest --template shop-the-look
 ```
 
-#### Manual setup (1 minutes)
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/pinecone-io/sample-apps.git
-   cd sample-apps/shop-the-look
-   ```
-
-3. Start the frontend server:
-   ```bash
-   npm run next-dev
-   # or
-   yarn next-dev
-   ```
-
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### 🚀 Vercel Demo Deployment (2 minutes)
-
-#### Manual setup (2 minutes)
-
-1. Clone the repository to your GitHub account.
-   ```bash
-   git clone https://github.com/pinecone-io/sample-apps.git
-   cd sample-apps/shop-the-look
-   ```
-
-2. Log in to your Vercel account and click "New Project".
-
-3. Import the repository.
-
-4. In the "Configure Project" step:
-   - Set the Framework Preset to Next.js
-   - In the "Environment Variables" page, modify `NEXT_PUBLIC_VERCEL_ENV` to `demo`:
-     ```
-     NEXT_PUBLIC_VERCEL_ENV=demo
-     ```
-
-5. Click "Deploy".
-
-Your Shop The Look front-end should now be deployed and accessible via the Vercel URL provided, using our hosted backend API for all data operations.
-
-***Note**: While this demo deployment is great for testing and exploration, for production use, you will need to setup your own backend services in the **Full Deployment** section below.*
+Then, open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## ☀️ Full Deployment (30 minutes)
 
@@ -158,7 +115,7 @@ In order to deploy the full Shop The Look sample app, you need to setup the foll
 
 <details>
 <summary>
-Google Cloud Setup
+<h4>Google Cloud Setup</h4>
 </summary>
 
 Google Cloud setup allows you to use Vertex AI, a machine learning platform that allows you to embed your images and videos using Google's Multimodal Embedding Model. This will also allow you to upload your images and videos to Google Cloud Storage.
@@ -210,7 +167,7 @@ Google Cloud setup allows you to use Vertex AI, a machine learning platform that
 
 <details>
 <summary>
-Pinecone Setup
+<h4>Pinecone Setup</h4>
 </summary>
 
 This step allows you to use Pinecone Serverless, our very own serverless vector database service, to upsert the multimodal embeddings to Pinecone.
@@ -236,14 +193,39 @@ This step allows you to use Pinecone Serverless, our very own serverless vector 
 
 1. Modify `.env.development.example` **(in the root directory of this repository)** and change name to `.env.development`:
 
-```
-PINECONE_API_KEY=[your_pinecone_api_key]
-GOOGLE_CREDENTIALS_BASE64=[your_base64_encoded_google_credentials]
-NEXT_PUBLIC_VERCEL_ENV=development
-NEXT_PUBLIC_DEVELOPMENT_URL=http://localhost:8000
-```
+2. Update the Google Cloud settings:
 
-2. Save the above environment variables to your shell configuration file (`.bashrc`, `.zshrc`, or any other `rc` file you use). Alternatively, you can set these environment variables manually in [your shell](https://www.digitalocean.com/community/tutorials/how-to-read-and-set-environmental-and-shell-variables-on-linux).
+   ```env.development
+   GOOGLE_CLOUD_PROJECT_ID=[your-google-cloud-project-id]
+   GOOGLE_CLOUD_PROJECT_LOCATION=[your-region]
+   GOOGLE_CLOUD_STORAGE_BUCKET_NAME=[your-gcs-bucket-name]
+   ```
+
+   - Set `GOOGLE_CLOUD_PROJECT_ID` to your own Google Cloud project ID, this looks something like `shop-the-look`, and is in the top-left corner of your Google Cloud dashboard. 
+   - Set `GOOGLE_CLOUD_PROJECT_LOCATION` to the region where your Google Cloud resources are located.
+   - Set `GOOGLE_CLOUD_STORAGE_BUCKET_NAME` to the name of your Google Cloud Storage (GCS) bucket. Instructions on how to setup and upload your assets to Google Cloud Storage: [Image and Video Embedding Processors README](https://github.com/pinecone-io/sample-apps-internal/blob/main/shop-the-look/scripts/README.md).
+
+3. Set up the Google credentials:
+
+   ```env.development
+   GOOGLE_CREDENTIALS_BASE64=[your-base64-encoded-google-credentials]
+   ```
+
+   - Ensure `GOOGLE_CREDENTIALS_BASE64` environment variable is set with your own base64-encoded service account JSON, instructions are [here](https://github.com/pinecone-io/sample-apps-internal/blob/main/shop-the-look/README.md#google-cloud-setup).
+
+4. Update the Pinecone settings:
+
+   ```env.development
+   PINECONE_API_KEY=[your-pinecone-api-key]
+   PINECONE_INDEX_NAME=[your-pinecone-index-name]
+   PINECONE_TOP_K=20  # or any other value you prefer
+   ```
+
+   - Set `PINECONE_API_KEY` to your own Pinecone API key, instructions are [here](https://github.com/pinecone-io/sample-apps-internal/blob/main/shop-the-look/README.md#pinecone-setup).
+   - Set `PINECONE_INDEX_NAME` to the name of your Pinecone index.
+   - *Optional: adjust `PINECONE_TOP_K` value to change the number of top results returned by your search.*
+
+5. Save the above environment variables to your shell configuration file (`.bashrc`, `.zshrc`, or any other `rc` file you use). Alternatively, you can set these environment variables manually in [your shell](https://www.digitalocean.com/community/tutorials/how-to-read-and-set-environmental-and-shell-variables-on-linux).
 
 #### Deploy
 
@@ -258,119 +240,79 @@ NEXT_PUBLIC_DEVELOPMENT_URL=http://localhost:8000
 
 ### 🚀 Vercel Full Deployment (5 minutes)
 
-TODO: Deploy using npx-create
-
 We have made it incredibly easy to deploy Shop The Look to [Vercel](https://vercel.com/), a popular cloud platform for building and deploying web applications.
 
 #### Deploying to Vercel
 
-1. Install the Vercel CLI:
-   ```bash
-   npm install -g vercel
-   ```
+1. Log in to your Vercel account and click "New Project".
 
-2. Login to Vercel:
-   ```bash
-   vercel login
-   ```
+   ![image](https://github.com/user-attachments/assets/ec560eff-a7e7-4058-a689-b916b546be1f)
 
-3. Deploy the project:
-   ```bash
-   vercel
-   ```
+3. Import this repository [`git@github.com:pinecone-io/sample-apps.git`](https://github.com/pinecone-io/sample-apps.git) using "Import Third-Party Git Repository"
 
-4. Follow the prompts to link your project to a Vercel account and project.
+   ![image](https://github.com/user-attachments/assets/b65edf09-57c4-4c43-93b4-c71ae6a4e428)
+   ![image](https://github.com/user-attachments/assets/0f795b9e-f194-4cf1-899c-3413956dd8a9)
 
-5. Set up environment variables in the Vercel project settings:
+5. Connect Vercel project to our Sample Apps Github repo
+
+   ![image](https://github.com/user-attachments/assets/e6630818-449a-4619-af3c-dca2c1b9408c)
+
+7. Set up "Root Directory" to use `shop-the-look` (***this step is important***)
+
+   ![image](https://github.com/user-attachments/assets/db65c0ab-9d43-42d5-948b-b4993b54b031)
+
+8. Set up environment variables in the Vercel project settings:
    - Go to your project on the Vercel dashboard
    - Navigate to **Settings** -> **Environment Variables**
    - Add the following variables:
 
    ```
-   PINECONE_API_KEY=[your_pinecone_api_key]
-   GOOGLE_CREDENTIALS_BASE64=[your_base64_encoded_google_credentials]
+   GOOGLE_CLOUD_PROJECT_ID=[your-google-cloud-project-id]
+   GOOGLE_CLOUD_PROJECT_LOCATION=[your-region]
+   GOOGLE_CLOUD_STORAGE_BUCKET_NAME=[your-gcs-bucket-name]
+   GOOGLE_CREDENTIALS_BASE64=[your-base64-encoded-google-credentials]
+
+   PINECONE_API_KEY=[your-pinecone-api-key]
+   PINECONE_INDEX_NAME=[your-pinecone-index-name]
+   PINECONE_TOP_K=20
    ```
 
-   **Note: The `NEXT_PUBLIC_` variables is automatically added by Vercel, so you don't need to manually add them.**
+   ![image](https://github.com/user-attachments/assets/307b712d-db0b-41b1-ba10-25b8adaebace)
 
-6. Redeploy your project to apply the environment variables:
-   ```bash
-   vercel --prod
-   ```
+9. Redeploy your project to apply the environment variables.
 
-7. Your Shop The Look application should now be deployed and accessible via the Vercel URL provided in the CLI.
+10. Your Shop The Look application should now be redeployed and accessible, but without assets.
 
-Follow the instructions in the [Use Your Own Images and Videos](#-use-your-own-images-and-videos) section to upload your own images and videos to Shop The Look.
+11. Upload your own images and videos. Follow the instructions in the next section. 
 
 ## 🌉 Use Your Own Images and Videos (20 minutes)
 
-In order to make Shop The Look your own, you need to upload your assets and modify the project config file. 
+In order to make Shop The Look your own, you need to **upload your own images and videos**. 
 
-### Upload, embed, and upsert assets (~15 minutes)
-
-1. Open the [Image and Video Embedding Processors](https://github.com/pinecone-io/sample-apps/blob/main/shop-the-look/scripts/README.md) folder (located at [`scripts/README.md`](https://github.com/pinecone-io/sample-apps/blob/main/shop-the-look/scripts/README.md)). 
-
-2. Read the README and use the two scripts to upload image and videos respectively.
-
-### Update credentials and project settings (5 minutes)
-
-To change Shop The Look to your credentials and settings, you need to modify the `api/config.py` file. 
-
-1. Open the `api/config.py` file in your project.
-
-2. Update the Google Cloud settings:
-   - Change the `project_id` to your own Google Cloud project ID, this looks something like `shop-the-look`, and is in the top-left corner of your Google Cloud dashboard. 
-   - Update the `location` to the region where your Google Cloud resources are located.
-   - Set the `gcs_bucket_name` to the name of your Google Cloud Storage bucket.
-
-   ```python
-   self.project_id = 'your-google-cloud-project-id'
-   self.location = 'your-region'
-   self.gcs_bucket_name = 'your-gcs-bucket-name'
-   ```
-
-3. Set up the Google credentials:
-   - Ensure the `GOOGLE_CREDENTIALS_BASE64` environment variable is set with your own base64-encoded service account JSON.
-
-   ```python
-   self.google_credentials_base64 = os.getenv('GOOGLE_CREDENTIALS_BASE64')
-   ```
-
-4. Update the Pinecone settings:
-   - Set the `api_key` to your own Pinecone API key.
-   - Change the `index_name` to the name of your Pinecone index.
-   - *Optional: adjust the `k` value to change the number of top results returned by your search.*
-
-   ```python
-   self.api_key = os.getenv('PINECONE_API_KEY')
-   self.index_name = 'your-pinecone-index-name'
-   self.k = 20  # or any other value you prefer
-   ```
-
-5. Save the changes to `config.py`.
-
-By following these steps, you will have customized the `config.py` file to connect to your own Google Cloud project and Pinecone index. Make sure to redeploy your project after making these changes to apply the new configuration.
-
-For more detailed instructions on setting up Google Cloud and Pinecone, refer to their respective documentation:
-- [Google Cloud Authentication](https://cloud.google.com/docs/authentication/getting-started)
-- [Pinecone Documentation](https://www.pinecone.io/docs?utm_source=shop-the-look&utm_medium=referral)
+Open the [Image and Video Embedding Processors](https://github.com/pinecone-io/sample-apps/blob/main/shop-the-look/scripts/README.md) guide (located at [`scripts/README.md`](https://github.com/pinecone-io/sample-apps/blob/main/shop-the-look/scripts/README.md)) and follow the instructions. 
 
 ## 🫠 Troubleshooting
 
 For **Google Cloud** authentication or permission issues, ensure that:
 - The service account has the correct permissions - `Vertex AI User`, `Storage Object Viewer`
-- The `GOOGLE_CREDENTIALS_BASE64` environment variable is correctly set, double check in your shell or Vercel environment variables.
+- The `GOOGLE_CREDENTIALS_BASE64` environment variable is correctly set, double check in your shell or Vercel environment variables. 
+- The environment variables are set. Save the environment variables to your shell configuration file (`.bashrc`, `.zshrc`, or any other `rc` file you use), or set these environment variables manually in [your shell](https://www.digitalocean.com/community/tutorials/how-to-read-and-set-environmental-and-shell-variables-on-linux).
 - The Google Cloud APIs are enabled for your project - `Vertex AI API`, `Cloud Storage API`
+- Make sure you have [setup Google Authentication for Shop The Look](https://github.com/pinecone-io/sample-apps-internal/blob/main/shop-the-look/README.md#google-cloud-setup) correctly
+- [Official Google Cloud Authentication Guide](https://cloud.google.com/docs/authentication/getting-started)
 
 For **Pinecone** issues, verify that:
 - You entered the right Index name
 - Your API key is correct
 - The Index is created with the correct dimensions (1408)
-- You're using the correct environment
+- The environment variables are set. Save the environment variables to your shell configuration file (`.bashrc`, `.zshrc`, or any other `rc` file you use), or set these environment variables manually in [your shell](https://www.digitalocean.com/community/tutorials/how-to-read-and-set-environmental-and-shell-variables-on-linux).
+- Make sure you have [setup Pinecone for Shop The Look](https://github.com/pinecone-io/sample-apps-internal/blob/main/shop-the-look/README.md#pinecone-setup) correctly
+- [Official Pinecone Documentation](https://www.pinecone.io/docs?utm_source=shop-the-look&utm_medium=referral)
 
 For **Vercel** deployment issues, check:
 - [Vercel build logs](https://vercel.com/docs/deployments/logs)
 - Ensure all [environment variables](https://vercel.com/docs/projects/environment-variables) are correctly set in the Vercel project settings
+- Ensure you set your project's **Settings** -> **Root Directory** to use `shop-the-look`, otherwise it would try to deploy the entire Sample App monorepo which would fail
 
 For **other** issues, please create an issue in the [GitHub repository](https://github.com/pinecone-io/sample-apps/issues).
 
