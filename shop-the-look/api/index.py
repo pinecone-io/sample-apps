@@ -9,6 +9,10 @@ async def root():
     return {"message": "Welcome to the Shop The Look API!"}
 
 # Add CORS middleware
+# CORS is important for:
+# 1. Allowing controlled cross-origin access
+# 2. Enhancing security
+# 3. Enabling API interactions across domains
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

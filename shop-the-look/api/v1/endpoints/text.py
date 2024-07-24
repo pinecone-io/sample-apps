@@ -1,4 +1,3 @@
-import os
 import requests
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -16,15 +15,10 @@ async def query_text(query: TextQuery):
         if not query.query:
             raise HTTPException(status_code=400, detail="The query text cannot be empty")
 
-        # Get the access token
         access_token = settings.get_access_token()
 
-        # Prepare the API request
-        url = f"https://{settings.location}-aiplatform.googleapis.com/v1/projects/{settings.project_id}/locations/{settings.location}/publishers/google/models/multimodalembedding@001:predict"
-        headers = {
-            "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/json"
-        }
+        url, headers, data = settings.get_embedding_request_data(access_token, 'text', query.query)
+
         data = {
             "instances": [
                 {
@@ -33,15 +27,13 @@ async def query_text(query: TextQuery):
             ]
         }
 
-        # Make the API call
         response = requests.post(url, headers=headers, json=data)
         response.raise_for_status()
 
-        # Extract the embedding from the response
+        # Extract the first embedding from the response
         embedding_data = response.json()
         vector = embedding_data['predictions'][0]['textEmbedding']
 
-        # Query Pinecone
         query_response = deps.index.query(
             vector=vector,
             top_k=settings.k,

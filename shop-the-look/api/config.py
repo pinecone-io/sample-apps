@@ -76,4 +76,34 @@ class Settings:
             print(f"Error getting access token: {str(e)}")
             return None
 
+    def get_embedding_request_data(access_token, content_type, content):
+        """
+        Prepares the request data for the multimodal embedding API.
+
+        :param access_token: The access token for authentication
+        :param content_type: The type of content ('text', 'image', or 'video')
+        :param content: The actual content (query string for text, base64 encoded string for image/video)
+        :return: A tuple containing the URL, headers, and data for the API request
+        """
+        url = f"https://{settings.location}-aiplatform.googleapis.com/v1/projects/{settings.project_id}/locations/{settings.location}/publishers/google/models/multimodalembedding@001:predict"
+        
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/json"
+        }
+
+        instance = {}
+        if content_type == 'text':
+            instance["text"] = content
+        elif content_type in ['image', 'video']:
+            instance[content_type] = {"bytesBase64Encoded": content}
+        else:
+            raise ValueError(f"Unsupported content type: {content_type}")
+
+        data = {
+            "instances": [instance]
+        }
+
+        return url, headers, data
+
 settings = Settings()

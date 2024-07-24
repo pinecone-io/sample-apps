@@ -1,5 +1,3 @@
-// app.layout.tsx
-
 import { ReactNode } from 'react';
 import { Fira_Mono } from 'next/font/google';
 import { Roboto } from 'next/font/google';

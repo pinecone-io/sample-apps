@@ -1,5 +1,3 @@
-// /components/ImageCropper.ts
-
 export const cropImageToCenter = (file: File): Promise<Blob> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();

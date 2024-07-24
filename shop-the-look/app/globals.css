@@ -42,7 +42,6 @@
   opacity: 1;
 }
 
-/* Your existing grid and video container styles */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));

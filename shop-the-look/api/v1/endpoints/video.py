@@ -21,36 +21,18 @@ async def query_video(file: UploadFile = File(...)):
         if len(base64_video) > 27000000:
             os.remove(file_path)
             raise HTTPException(status_code=400, detail="We don't support videos greater than 20 MB. Please upload a smaller video.")
-        
-        # Get the access token
+
         access_token = settings.get_access_token()
         
-        # Prepare the API request
-        url = f"https://{settings.location}-aiplatform.googleapis.com/v1/projects/{settings.project_id}/locations/{settings.location}/publishers/google/models/multimodalembedding@001:predict"
-        headers = {
-            "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/json"
-        }
-        data = {
-            "instances": [
-                {
-                    "video": {
-                        "bytesBase64Encoded": base64_video
-                    }
-                }
-            ]
-        }
+        url, headers, data = settings.get_embedding_request_data(access_token, 'video', base64_video)
         
-        # Make the API call
         response = requests.post(url, headers=headers, json=data)
         response.raise_for_status()
         
-        # Extract the embedding from the response
+        # Extract the first embedding from the response
         embedding_data = response.json()
-        # TODO: ONLY GETTING THE FIRST EMBEDDING
         vector = embedding_data['predictions'][0]['videoEmbeddings'][0]['embedding']
         
-        # Query Pinecone
         query_response = deps.index.query(
             vector=vector,
             top_k=settings.k,

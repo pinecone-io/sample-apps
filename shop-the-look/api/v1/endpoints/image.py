@@ -1,4 +1,3 @@
-import os
 import base64
 import requests
 import imghdr
@@ -11,7 +10,6 @@ router = APIRouter()
 @router.post("/search/image")
 async def query_image(file: UploadFile = File(...)):
     try:
-        # Check file format
         contents = await file.read()
         file_format = imghdr.what(None, h=contents)
         
@@ -19,37 +17,19 @@ async def query_image(file: UploadFile = File(...)):
         if file_format not in ['bmp', 'gif', 'jpeg', 'png', 'jpg']:
             raise HTTPException(status_code=400, detail="We only support BMP, GIF, JPG, and PNG for images. Please upload a valid image file.")
         
-        # Encode image to base64
         base64_encoded_image = base64.b64encode(contents).decode('utf-8')
         
-        # Get the access token
         access_token = settings.get_access_token()
         
-        # Prepare the API request
-        url = f"https://{settings.location}-aiplatform.googleapis.com/v1/projects/{settings.project_id}/locations/{settings.location}/publishers/google/models/multimodalembedding@001:predict"
-        headers = {
-            "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/json"
-        }
-        data = {
-            "instances": [
-                {
-                    "image": {
-                        "bytesBase64Encoded": base64_encoded_image
-                    }
-                }
-            ]
-        }
+        url, headers, data = settings.get_embedding_request_data(access_token, 'image', base64_encoded_image)
         
-        # Make the API call
         response = requests.post(url, headers=headers, json=data)
         response.raise_for_status()
         
-        # Extract the embedding from the response
+        # Extract the first embedding from the response
         embedding_data = response.json()
         vector = embedding_data['predictions'][0]['imageEmbedding']
         
-        # Query Pinecone
         query_response = deps.index.query(
             vector=vector,
             top_k=settings.k,

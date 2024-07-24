@@ -120,7 +120,7 @@ export default function Home() {
     };
 
     track('page_viewed', pageViewData);
-  }, [totalVectors]); // Include totalVectors in the dependency array if it's not available immediately
+  }, [totalVectors]);
 
   useEffect(() => {
 
@@ -195,7 +195,6 @@ export default function Home() {
 
     setShowSuggestions(false);
 
-    // Reset search state before starting a new search
     resetSearchState();
 
     setIsSearching(true);
