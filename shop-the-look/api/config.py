@@ -76,7 +76,7 @@ class Settings:
             print(f"Error getting access token: {str(e)}")
             return None
 
-    def get_embedding_request_data(access_token, content_type, content):
+    def get_embedding_request_data(self, access_token, content_type, content):
         """
         Prepares the request data for the multimodal embedding API.
 
@@ -85,7 +85,7 @@ class Settings:
         :param content: The actual content (query string for text, base64 encoded string for image/video)
         :return: A tuple containing the URL, headers, and data for the API request
         """
-        url = f"https://{settings.location}-aiplatform.googleapis.com/v1/projects/{settings.project_id}/locations/{settings.location}/publishers/google/models/multimodalembedding@001:predict"
+        url = f"https://{self.location}-aiplatform.googleapis.com/v1/projects/{self.project_id}/locations/{self.location}/publishers/google/models/multimodalembedding@001:predict"
         
         headers = {
             "Authorization": f"Bearer {access_token}",
@@ -105,5 +105,4 @@ class Settings:
         }
 
         return url, headers, data
-
 settings = Settings()

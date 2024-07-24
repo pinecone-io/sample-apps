@@ -19,14 +19,6 @@ async def query_text(query: TextQuery):
 
         url, headers, data = settings.get_embedding_request_data(access_token, 'text', query.query)
 
-        data = {
-            "instances": [
-                {
-                    "text": query.query
-                }
-            ]
-        }
-
         response = requests.post(url, headers=headers, json=data)
         response.raise_for_status()
 
