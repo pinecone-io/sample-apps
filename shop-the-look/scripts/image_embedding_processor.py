@@ -97,7 +97,7 @@ def main(gc_project_id, gcs_bucket_name, gcs_folder_name, pinecone_index_name):
             f.write(google_credentials)
         os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_path
 
-    pc = Pinecone(api_key=api_key)
+    pc = Pinecone(api_key=api_key, source_tag="pinecone:stl_sample_app")
     index = pc.Index(pinecone_index_name)
 
     vertexai.init(project=gc_project_id, location=REGION)

@@ -120,7 +120,7 @@ def main(gc_project_id, gcs_bucket_name, gcs_folder_name, pinecone_index_name):
     api_key = os.getenv('PINECONE_API_KEY')
     if not api_key:
         raise ValueError("PINECONE_API_KEY environment variable is not set.")
-    pc = Pinecone(api_key=api_key)
+    pc = Pinecone(api_key=api_key, source_tag="pinecone:stl_sample_app")
     index = pc.Index(pinecone_index_name)
 
     # Initialize Vertex AI

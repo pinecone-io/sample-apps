@@ -23,6 +23,8 @@ Shop The Look is a multimodal search engine for finding outfit inspiration built
 
 This sample application is a great starting point for you to build your own multimodal search engine for your use cases. Clone it, run it locally or deploy it to Vercel, and customize it to make it your own.
 
+![image](https://github.com/user-attachments/assets/31dff4bd-f56b-4f08-8998-7a6e1aa3ca7b)
+
 ## 💡 Features
 
 - **Multimodal Search**: Combines text, image, and video inputs to provide highly relevant outfit recommendations.
