@@ -11,7 +11,7 @@ import { track } from '@vercel/analytics';
 import Head from 'next/head';
 
 // Components
-import { PhotoFrameIcon, MagnifyingGlassIcon } from './components/Icons';
+import { PhotoFrameIcon, MagnifyingGlassIcon, QuestionMarkCircleIcon } from './components/Icons';
 import Footer from './components/Footer';
 import { handleFileUpload } from './components/FileUploadHandler';
 
@@ -283,9 +283,7 @@ export default function Home() {
   };
 
   const getScoreLabel = (score: number) => {
-    if (score <= 10) return { label: 'Low', color: 'bg-red-500', score };
-    if (score <= 50) return { label: 'Medium', color: 'bg-blue-500', score };
-    return { label: 'High', color: 'bg-green-500', score };
+    return { score: score.toFixed(4) };
   };
 
   const getVideoId = (result: Result, index: number) => `video-${index}-${result.metadata.gcs_public_url}`;
@@ -450,7 +448,7 @@ export default function Home() {
             {!isLoadingResults && results.length > 0 && (
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {results.map((result, index) => {
-                  const { label, color, score } = getScoreLabel(result.score);
+                  const { score } = getScoreLabel(result.score);
                   const videoId = getVideoId(result, index);
                   return (
                     <div key={videoId}>
@@ -467,8 +465,15 @@ export default function Home() {
                           </video>
                         </div>
                       )}
-                      <div className={`inline-block mt-2 mb-2 px-1 py-1 text-sm text-gray-400`}>
-                        {label} relevance: {score}%
+                      <div className="inline-block mt-2 mb-2 px-1 py-1 text-sm text-gray-400 flex items-center">
+                        Similarity score: {score}
+                        <div className="relative ml-1 group">
+                          <QuestionMarkCircleIcon className="h-4 w-4 text-gray-400" />
+                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-500 text-white text-xs rounded py-1 px-2 hidden group-hover:block whitespace-nowrap">
+                            Cosine similarity score between 0 - 1, higher is more similar. 
+                            <a href="https://www.pinecone.io/learn/vector-similarity?utm_source=shop-the-look&utm_medium=referral)" target="_blank" rel="noopener noreferrer" className="text-blue-300 hover:text-blue-200"> About vector similarity.</a>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   );
