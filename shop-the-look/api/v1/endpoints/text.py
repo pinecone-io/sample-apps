@@ -34,7 +34,7 @@ async def query_text(query: TextQuery):
 
         matches = query_response['matches']
         results = [{
-            "score": round(match['score'] * 100, 2),
+            "score": match['score'],
             "metadata": {
                 "gcs_file_name": match['metadata'].get('gcs_file_name'),
                 "gcs_file_path": match['metadata'].get('gcs_file_path'),

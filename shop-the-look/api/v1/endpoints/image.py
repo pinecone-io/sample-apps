@@ -1,6 +1,7 @@
 import base64
 import requests
-import imghdr
+from PIL import Image
+import io
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from api.config import settings
 from api import deps
@@ -11,11 +12,13 @@ router = APIRouter()
 async def query_image(file: UploadFile = File(...)):
     try:
         contents = await file.read()
-        file_format = imghdr.what(None, h=contents)
+
+        with Image.open(io.BytesIO(contents)) as img:
+            file_format = img.format.lower()
         
         # Vertex AI Multimodal Embedding Model only supports the following image formats
         if file_format not in ['bmp', 'gif', 'jpeg', 'png', 'jpg']:
-            raise HTTPException(status_code=400, detail="We only support BMP, GIF, JPG, and PNG for images. Please upload a valid image file.")
+            raise HTTPException(status_code=400, detail="We only support BMP, GIF, JPG, JPEG, and PNG for images. Please upload a valid image file.")
         
         base64_encoded_image = base64.b64encode(contents).decode('utf-8')
         
@@ -38,7 +41,7 @@ async def query_image(file: UploadFile = File(...)):
         
         matches = query_response['matches']
         results = [{
-            "score": round(match['score'] * 100, 2),
+            "score": match['score'],
             "metadata": {
                 "gcs_file_name": match['metadata'].get('gcs_file_name'),
                 "gcs_file_path": match['metadata'].get('gcs_file_path'),
