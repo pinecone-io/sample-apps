@@ -52,6 +52,7 @@ export async function POST(req: Request) {
     7. Be concise and to the point.
     8. Give answers for each news item in the context.
     9. Use the "published_at" metadata which is a unix timestamp to sort them in descending order.
+    10. If asked for additional context, provide a longer summary of the context text. If the context is under 1000 tokens, provide the entire context. If the context is over 1000 tokens, provide a summary of the context.
       START CONTEXT BLOCK
       ${contextText}
       END OF CONTEXT BLOCK
