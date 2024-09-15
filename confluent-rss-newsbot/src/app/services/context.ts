@@ -23,6 +23,12 @@ export const getContext = async (message: string, namespace: string, maxTokens =
   const matches = await getMatchesFromEmbeddings(values, 10, namespace, minTimestamp);
   console.log("Matches received:", matches.length);
 
+  if (matches.length === 0) {
+    console.log("No matches found, check that the namespace and index are correct.");
+    console.log("Namespace:", namespace);
+    console.log("Index:", process.env.PINECONE_INDEX);
+  }
+
   console.log("Matches and scores:");
   matches.forEach((match, index) => {
     console.log(`Match ${index + 1}: score = ${match.score}`);
@@ -30,6 +36,10 @@ export const getContext = async (message: string, namespace: string, maxTokens =
 
   const qualifyingDocs = matches.filter(m => m.score && m.score > minScore);
   console.log("Qualifying docs:", qualifyingDocs.length);
+
+  console.log("Current timestamp:", currentTimestamp);
+  console.log("Latest news timeframe:", latestNewsTimeframe);
+  console.log("Min timestamp:", minTimestamp);
 
   return qualifyingDocs;
 }

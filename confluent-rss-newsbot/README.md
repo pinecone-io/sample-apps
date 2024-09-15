@@ -21,6 +21,7 @@ cd confluent-demo
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+npm install
 ```
 
 ## Step 2: Configure Environment Variables

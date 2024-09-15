@@ -34,8 +34,7 @@ const getMatchesFromEmbeddings = async (embeddings: number[], topK: number, name
       }
     }
     const queryResult = await pineconeNamespace.query(queryBody)
-    console.log("query: ", JSON.stringify(queryBody))
-    //console.log("queryResult", JSON.stringify(queryResult))
+    console.log("Query result:", JSON.stringify(queryResult, null, 2));
     return queryResult.matches || []
   } catch (e) {
     // Log the error and throw it
