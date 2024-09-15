@@ -1,0 +1,42 @@
+import os
+from pinecone import Pinecone, ServerlessSpec
+from logger_config import logger
+
+# Initialize Pinecone client
+pc = Pinecone(api_key=os.environ.get('PINECONE_API_KEY'))
+
+# Get the index name from environment variables
+index_name = os.environ.get('PINECONE_INDEX')
+
+# Get or create the index
+if index_name not in pc.list_indexes().names():
+    pc.create_index(
+        name=index_name,
+        dimension=1536,  # dimensionality of text-embedding-3-small
+        metric='cosine',
+        spec=ServerlessSpec(
+            cloud='aws',
+            region='us-west-2'
+        )
+    )
+
+# Get the index
+index = pc.Index(index_name)
+
+def upsert_to_pinecone(id, vector, metadata):
+    try:
+        # Upsert the vector to Pinecone
+        upsert_response = index.upsert(
+            vectors=[
+                {
+                    'id': id,
+                    'values': vector,
+                    'metadata': metadata
+                }
+            ],
+            namespace=os.environ.get('PINECONE_NAMESPACE') or ''
+        )
+        logger.info(f"Vector upserted to Pinecone: {upsert_response}, {id}")
+    except Exception as e:
+        logger.error(f"Error upserting vector to Pinecone: {e}")
+        raise
