@@ -41,9 +41,10 @@ If you don't already have an index, the application will create one for you with
 
 ### Create a Voyage embeddings API key
 
-Create a new account [here](https://www.voyageai.com/). 
-
-Log into [the Voyage AI dashboard](https://dash.voyageai.com/) and create a new API key [here].
+1. Create a new [Voyage AI](https://www.voyageai.com/) account [here](https://dash.voyageai.com/).
+1. Create a [new API key](https://dashboard.voyageai.com/organization/api-keys).
+1. Add your billing information to your Voyage AI account [here](https://dashboard.voyageai.com/organization/billing). This is required even to use the free tier.
+1. Copy your API key.
 
 ### Start the project
 
