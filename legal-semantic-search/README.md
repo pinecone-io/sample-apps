@@ -69,7 +69,7 @@ VOYAGE_API_KEY="your-api-key-here"
 
 # Get your Pinecone API key here: https://app.pinecone.io/
 PINECONE_API_KEY="your-api-key-here"
-PINECONE_INDEX="legal_semantic_search" # Or any other name you wish
+PINECONE_INDEX="legal-semantic-search"
 ```
 
 This application will detect if you already have an index of the same name as the value you set in your `PINECONE_INDEX` environment variable.
