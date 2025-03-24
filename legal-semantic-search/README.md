@@ -57,7 +57,7 @@ Follow [these steps](https://docs.pinecone.io/guides/projects/manage-api-keys#cr
 From the project root directory, run the following command.
 
 ```bash
-cd legal-semantic-search && npm install --force
+cd legal-semantic-search && npm install --legacy-peer-deps
 ```
 
 Make sure you have populated the client `.env` with relevant keys.
