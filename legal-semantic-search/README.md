@@ -26,26 +26,29 @@ The sample app use case is focused on semantic search over legal documents, but 
 
 ### Want to move fast?
 
-Use `npx create-pinecone-app` to adopt this project quickly.
+The fastest way to get started is to use the `create-pinecone-app` CLI tool to get up and running:
 
-### Create a Pinecone API key 
+```bash
+npx -y create-pinecone-app@latest --template legal-semantic-search
+```
 
-**Grab an API key here**
+### Create a Pinecone API key
 
-<div id="pinecone-connect-widget"></div>
-
-This application will detect if you already have an index of the same name as the value 
-you set in your `PINECONE_INDEX` environment variable. 
-
-If you don't already have an index, the application will create one for you with the correct dimenions.
+Follow [these steps](https://docs.pinecone.io/guides/projects/manage-api-keys#create-an-api-key) to create a Pinecone API key:
+1. Open the [Pinecone console](https://app.pinecone.io/).
+1. Select your project.
+1. Go to **API Keys**.
+1. Create an API key.
+1. Copy your API key.
 
 ### Create a Voyage embeddings API key
 
-Create a new account [here](https://www.voyageai.com/). 
+1. Create a new [Voyage AI](https://www.voyageai.com/) account [here](https://dash.voyageai.com/).
+1. Create a [new API key](https://dashboard.voyageai.com/organization/api-keys).
+1. Add your billing information to your Voyage AI account [here](https://dashboard.voyageai.com/organization/billing). This is required even to use the free tier.
+1. Copy your API key.
 
-Log into [the Voyage AI dashboard](https://dash.voyageai.com/) and create a new API key [here].
-
-### Start the project
+### Setup the project
 
 **Requires Node version 20+**
 
@@ -66,10 +69,14 @@ VOYAGE_API_KEY="your-api-key-here"
 
 # Get your Pinecone API key here: https://app.pinecone.io/
 PINECONE_API_KEY="your-api-key-here"
-PINECONE_INDEX="legal_semantic_search" # Or any other name you wish
+PINECONE_INDEX="legal-semantic-search"
 ```
 
-Start the app.
+This application will detect if you already have an index of the same name as the value you set in your `PINECONE_INDEX` environment variable.
+
+If you don't already have an index, the application will create one for you with the correct dimenions.
+
+### Run the app.
 
 ```bash
 npm run dev
