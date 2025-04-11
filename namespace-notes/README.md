@@ -25,13 +25,16 @@ Use `npx create-pinecone-app` to adopt this project quickly.
 
 ### Create a Pinecone Serverless index
 
-Create a Pinecone index for this project.
+Create a Pinecone index for this project using Manual configuration or Custom settings.
+
 The index should have the following properties:
 
-- **dimension**: `1536`
-  - You can change this as long as you change the default embedding model.
-- **metric**: `cosine`
-- **region**: `us-east-1`
+- **Vector type**: `Dense`
+- **Dimension**: `1536`
+  - Make sure to use Manual configuration or Custom settings
+- **Metric**: `cosine`
+- **Cloud provider**: `AWS`
+- **Region**: `us-east-1`
 
 **Grab an API key here**
 
@@ -87,16 +90,16 @@ PINECONE_INDEX_NAME="your_pinecone_index_name_here"
 OPENAI_API_KEY="your_openai_api_key_here"
 
 # Digital Ocean Spaces (OPTIONAL - for public file hosting)
-DO_SPACES_ACCESS_KEY_ID="your_do_spaces_access_key_id_here"
-DO_SPACES_SECRET_ACCESS_KEY="your_do_spaces_secret_access_key_here"
-DO_SPACES_ENDPOINT="your_do_spaces_endpoint_here"
-DO_SPACES_BUCKET_NAME="your_do_spaces_bucket_name_here"
+#DO_SPACES_ACCESS_KEY_ID="your_do_spaces_access_key_id_here"
+#DO_SPACES_SECRET_ACCESS_KEY="your_do_spaces_secret_access_key_here"
+#DO_SPACES_ENDPOINT="your_do_spaces_endpoint_here"
+#DO_SPACES_BUCKET_NAME="your_do_spaces_bucket_name_here"
 ```
 
 Start the server.
 
 ```bash
-npm run start
+npm run dev
 ```
 
 Note: You may notice that Digital Ocean Spaces is available as document storage. Using Digital Ocean Spaces is entirely optional. The project has a class defined to store document files locally on the server for quick project spin-up.
