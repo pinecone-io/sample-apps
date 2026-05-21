@@ -124,7 +124,7 @@ const SidenavItem: React.FC<SidenavItemProps> = ({ title, href, isActive, isColl
             : 'hover:bg-gray-100 hover:text-gray-900'
           } transition-all duration-100 justify-start px-4 py-4 ${animatedBorder ? 'border-glow' : ''}`}
         >
-          {<div className="mr-2">{icon}</div> || <TbNotes className="mr-2" />}
+          {icon ? <div className="mr-2">{icon}</div> : <TbNotes className="mr-2" />}
           <span>{title}</span>
           {locked &&
             <span className="ml-2 scale-75">
