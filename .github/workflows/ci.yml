@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Least-privilege default token (maintenance issue #71).
+permissions:
+  contents: read
+
+jobs:
+  # Phase 1 (informational): each Next.js app installs + lints + builds.
+  # Jobs are non-blocking (continue-on-error) because some apps have
+  # known-broken installs tracked in #73 (e.g. legal-semantic-search
+  # `file:` deps) and SDK drift in #74. Flipping this matrix to a REQUIRED
+  # gate is tracked in #71 and depends on that cleanup landing.
+  node-apps:
+    name: "node: ${{ matrix.app }}"
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: legal-semantic-search
+            pm: npm
+          - app: pinecone-assistant
+            pm: pnpm
+          - app: shop-the-look
+            pm: npm
+    defaults:
+      run:
+        working-directory: ${{ matrix.app }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup pnpm
+        if: matrix.pm == 'pnpm'
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: ${{ matrix.pm }}
+          cache-dependency-path: ${{ matrix.app }}/${{ matrix.pm == 'pnpm' && 'pnpm-lock.yaml' || 'package-lock.json' }}
+      - name: Install
+        run: ${{ matrix.pm == 'pnpm' && 'pnpm install --frozen-lockfile' || 'npm ci' }}
+      - name: Lint
+        run: ${{ matrix.pm == 'pnpm' && 'pnpm run lint' || 'npm run lint' }}
+      - name: Build
+        run: ${{ matrix.pm == 'pnpm' && 'pnpm run build' || 'npm run build' }}
+
+  # namespace-notes is a client + server/node split (no top-level build).
+  namespace-notes:
+    name: "node: namespace-notes (install)"
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # Installs client and server via their real paths. The repo's own
+      # `install:all` script is broken (it targets `server/node`, but the
+      # dir is `server/`) — that defect is tracked in cleanup issue #73.
+      - name: Install client
+        working-directory: namespace-notes/client
+        run: npm install
+      - name: Install server
+        working-directory: namespace-notes/server
+        run: npm install
+
+  # shop-the-look has a FastAPI backend.
+  python-backend:
+    name: "python: shop-the-look"
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install requirements
+        working-directory: shop-the-look
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Byte-compile API
+        working-directory: shop-the-look
+        run: python -m compileall api
