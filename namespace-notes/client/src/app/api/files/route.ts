@@ -10,6 +10,20 @@ export interface FetchedFile {
 export const maxDuration = 600
 
 /**
+ * Validates a user-supplied identifier before it is used to build an outbound
+ * request URL. Only allows a conservative id charset and rejects anything that
+ * could alter the request path/host (slashes, dots, encoded traversal), then
+ * URL-encodes the value. This prevents server-side request forgery via the
+ * `namespaceId` / `documentId` query parameters.
+ */
+function safeId(value: string, label: string): string {
+  if (!/^[A-Za-z0-9_-]+$/.test(value)) {
+    throw new Error(`Invalid ${label}`);
+  }
+  return encodeURIComponent(value);
+}
+
+/**
  * Fetches all file URLs for a given namespace from the backend server.
  *
  * @param req - The request object.
@@ -26,7 +40,10 @@ export async function GET(request: Request) {
 
   try {
     // Ensure the SERVER_URL is correctly configured in your environment
-    const url = `${process.env.SERVER_URL}/api/documents/files/${namespaceId}`;
+    const url = `${process.env.SERVER_URL}/api/documents/files/${safeId(
+      namespaceId,
+      "namespaceId"
+    )}`;
     const response = await fetch(url, { method: "GET" });
     const data = await response.json();
 
@@ -107,13 +124,17 @@ export async function DELETE(request: Request) {
     let url;
     let message;
 
+    const safeNamespaceId = safeId(namespaceId, "namespaceId");
     if (typeof documentId === "string") {
       // Delete a specific document
-      url = `${process.env.SERVER_URL}/api/documents/files/delete/${namespaceId}/${documentId}`;
+      url = `${process.env.SERVER_URL}/api/documents/files/delete/${safeNamespaceId}/${safeId(
+        documentId,
+        "documentId"
+      )}`;
       message = "File deleted successfully";
     } else {
       // Delete the entire workspace/namespace
-      url = `${process.env.SERVER_URL}/api/documents/workspace/${namespaceId}`;
+      url = `${process.env.SERVER_URL}/api/documents/workspace/${safeNamespaceId}`;
       message = "Workspace deleted successfully";
     }
 

@@ -2,24 +2,28 @@
 import fs from "fs";
 import path from "path";
 import { FileDetail, StorageService } from "./storage";
+import { safeJoin, sanitizeSegment } from "./pathSafety";
 
 export class ServerStorage implements StorageService {
   private readonly uploadDir = "uploads";
 
   async saveFile(file: Express.Multer.File, fileKey: string): Promise<void> {
     const [namespaceId, documentId, ...rest] = fileKey.split("/");
-    const fileName = rest.join("/");
-    const documentDirectory = path.join(
+    // Confine the file to <uploadDir>/<namespaceId>/<documentId>/<fileName>.
+    // Any traversal in the user-supplied segments is rejected by safeJoin.
+    const fileName = path.basename(rest.join("/"));
+    const destinationPath = safeJoin(
       this.uploadDir,
       namespaceId,
-      documentId
+      documentId,
+      fileName
     );
+    const documentDirectory = path.dirname(destinationPath);
 
     if (!fs.existsSync(documentDirectory)) {
       fs.mkdirSync(documentDirectory, { recursive: true });
     }
 
-    const destinationPath = path.join(documentDirectory, fileName);
     await fs.promises.rename(file.path, destinationPath);
   }
 
@@ -30,14 +34,15 @@ export class ServerStorage implements StorageService {
   }
 
   async getFilePath(fileKey: string): Promise<string> {
-    const filePath = path.join(this.uploadDir, fileKey);
+    const segments = fileKey.split("/").filter((s) => s.length > 0);
+    const filePath = safeJoin(this.uploadDir, ...segments);
     const files = await fs.promises.readdir(filePath);
-    const firstFile = files[0];
+    const firstFile = sanitizeSegment(files[0], "file name");
     return path.join(filePath, firstFile);
   }
 
   async deleteWorkspaceFiles(namespaceId: string): Promise<void> {
-    const namespaceDirectory = path.join(this.uploadDir, namespaceId);
+    const namespaceDirectory = safeJoin(this.uploadDir, namespaceId);
     if (fs.existsSync(namespaceDirectory)) {
       fs.rmdirSync(namespaceDirectory, { recursive: true });
     }
@@ -48,7 +53,7 @@ export class ServerStorage implements StorageService {
     documentId: string
   ): Promise<void> {
     try {
-      const documentDirectory = path.join(
+      const documentDirectory = safeJoin(
         this.uploadDir,
         namespaceId,
         documentId
@@ -63,7 +68,7 @@ export class ServerStorage implements StorageService {
   }
 
   async listFilesInNamespace(namespaceId: string): Promise<FileDetail[]> {
-    const namespacePath = path.join(this.uploadDir, namespaceId);
+    const namespacePath = safeJoin(this.uploadDir, namespaceId);
     try {
       const documentDirs = fs
         .readdirSync(namespacePath, { withFileTypes: true })
@@ -72,7 +77,7 @@ export class ServerStorage implements StorageService {
 
       const allFiles: FileDetail[] = [];
       for (const documentId of documentDirs) {
-        const documentPath = path.join(namespacePath, documentId);
+        const documentPath = safeJoin(this.uploadDir, namespaceId, documentId);
         const files = fs.readdirSync(documentPath);
         allFiles.push(
           ...files.map((filename) => ({
