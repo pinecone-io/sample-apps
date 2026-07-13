@@ -1,0 +1,157 @@
+name: CI
+
+# Execution-based test gate for the sample apps.
+#
+# Every app is built (compile + typecheck) and then driven with a smoke check
+# that boots the built app and asserts it responds. Pinecone is MOCKED or GATED
+# with a dummy key — CI needs no live Pinecone connection and no real API key
+# (per AGENTS.md). See TESTING.md for the pattern and the manual
+# "run against real Pinecone" path.
+#
+# The LIVE validation lane (real Pinecone in CI) is intentionally NOT here yet:
+# it is blocked on PIN-50 (PINECONE_API_KEY secret, owner jhamon@pinecone.io).
+# Add it as a separate, secret-gated job when PIN-50 lands.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # Dummy, non-secret placeholders. The Pinecone clients only require the key to
+  # be a non-empty string at construction; no live call is made in these checks.
+  PINECONE_API_KEY: pclocal-ci-dummy-key
+  NODE_VERSION: "20"
+
+jobs:
+  legal-semantic-search:
+    name: legal-semantic-search (Next.js)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: legal-semantic-search
+    env:
+      PINECONE_INDEX: ci-dummy-index
+      VOYAGE_API_KEY: ci-dummy-voyage
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      # Committed lockfile predates a langchain peer-dep bump; --legacy-peer-deps
+      # installs it the way the app is documented to install.
+      - run: npm install --legacy-peer-deps
+      - name: Build (next build — compiles + typechecks)
+        run: npm run build
+      - name: Smoke — boot app, expect HTTP 200 on /
+        run: bash ../scripts/ci/smoke_http.sh "http://127.0.0.1:3000/" 200 -- npx next start -p 3000
+
+  namespace-notes-client:
+    name: namespace-notes / client (Next.js)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: namespace-notes/client
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm install --legacy-peer-deps
+      - name: Build (next build — compiles + typechecks)
+        run: npm run build
+      - name: Smoke — boot app, expect HTTP 200 on /
+        run: bash ../../scripts/ci/smoke_http.sh "http://127.0.0.1:3000/" 200 -- npx next start -p 3000
+
+  namespace-notes-server:
+    name: namespace-notes / server (Express + TS)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: namespace-notes/server
+    env:
+      PORT: "4001"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      # `npm run build` runs `npm install --include=dev && tsc` per the repo.
+      - name: Build (install + tsc)
+        run: npm run build
+      # The server has no Pinecone-free route, so the smoke asserts the process
+      # boots, binds the port, and routes a request (any HTTP response = alive;
+      # the handler itself 500s because Pinecone is gated with a dummy key).
+      - name: Smoke — boot server, expect any HTTP response
+        run: bash ../../scripts/ci/smoke_http.sh "http://127.0.0.1:4001/api/documents/files/ci-smoke" any -- node dist/index.js
+
+  pinecone-assistant:
+    name: pinecone-assistant (Next.js + pnpm)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pinecone-assistant
+    env:
+      # Skip pnpm's pre-run dependency verification, which otherwise fails the
+      # run on optional native build scripts (sharp) being blocked in CI.
+      NPM_CONFIG_VERIFY_DEPS_BEFORE_RUN: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: pinecone-assistant/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - name: Build (next build — compiles + typechecks)
+        run: pnpm run build
+      - name: Smoke — boot app, expect HTTP 200 on /
+        run: bash ../scripts/ci/smoke_http.sh "http://127.0.0.1:3000/" 200 -- pnpm exec next start -p 3000
+
+  shop-the-look-web:
+    name: shop-the-look / web (Next.js)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: shop-the-look
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm ci
+      - name: Build (next build — compiles + typechecks)
+        run: npm run build
+      - name: Smoke — boot app, expect HTTP 200 on /
+        run: bash ../scripts/ci/smoke_http.sh "http://127.0.0.1:3000/" 200 -- npx next start -p 3000
+
+  shop-the-look-api:
+    name: shop-the-look / api (FastAPI + Python)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: shop-the-look
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install (runtime + test deps)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+      # Execution-based smoke: boots the FastAPI app via TestClient with Pinecone
+      # mocked, and asserts the root route serves. No live Pinecone needed.
+      - name: Smoke — pytest (Pinecone mocked)
+        run: python -m pytest tests/ -q
