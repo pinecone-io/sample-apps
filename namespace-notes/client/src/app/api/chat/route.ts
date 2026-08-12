@@ -1,17 +1,20 @@
-import { StreamingTextResponse, experimental_streamText } from "ai";
+import { streamText, convertToModelMessages, type UIMessage } from "ai";
 
 import { openai } from "@ai-sdk/openai";
 
 export const runtime = "edge";
 
-/**
- * Handles the POST request for the chat route.
- * @param req - The request object.
- * @returns A StreamingTextResponse object containing the result of the chat interaction.
- * @throws An error if the expected prompt structure is not present in the server response.
- */
 export async function POST(req: Request) {
-  const { messages, namespaceId } = await req.json();
+  const { messages, namespaceId }: { messages: UIMessage[]; namespaceId: string } =
+    await req.json();
+
+  const contextMessages = messages.map((message) => ({
+    role: message.role,
+    content: message.parts
+      .map((part) => (part.type === "text" ? part.text : ""))
+      .join(""),
+  }));
+
   const response = await fetch(`${process.env.SERVER_URL}/api/context/fetch`, {
     method: "POST",
     headers: {
@@ -19,7 +22,7 @@ export async function POST(req: Request) {
     },
     body: JSON.stringify({
       namespaceId: namespaceId,
-      messages: messages,
+      messages: contextMessages,
     }),
   });
 
@@ -28,15 +31,15 @@ export async function POST(req: Request) {
   if (context && context.prompt && context.prompt.length > 0) {
     const systemContent = context.prompt[0].content;
 
-    const result = await experimental_streamText({
+    const result = streamText({
       system: systemContent,
       temperature: 0.2,
-      model: openai.chat("gpt-4-turbo"),
+      model: openai("gpt-4-turbo"),
       maxRetries: 8,
-      messages,
+      messages: await convertToModelMessages(messages),
     });
 
-    return new StreamingTextResponse(result.toAIStream());
+    return result.toUIMessageStreamResponse();
   } else {
     throw new Error(
       "Unexpected server response structure: 'prompt' array is missing or empty."

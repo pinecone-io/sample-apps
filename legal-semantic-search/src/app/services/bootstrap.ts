@@ -2,7 +2,6 @@
 
 import { NextResponse } from 'next/server';
 import { Pinecone } from "@pinecone-database/pinecone";
-import { DirectoryLoader } from "langchain/document_loaders/fs/directory";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { VoyageEmbeddings } from "@langchain/community/embeddings/voyage";
@@ -92,11 +91,14 @@ export const handleBootstrapping = async (targetIndex: string) => {
     const docsPath = path.resolve(process.cwd(), 'docs/')
 
     // Load all PDFs within the specified directory
-    const loader = new DirectoryLoader(docsPath, {
-      '.pdf': (filePath: string) => new PDFLoader(filePath),
-    });
+    const entries = await fs.readdir(docsPath);
+    const pdfPaths = entries
+      .filter((entry) => path.extname(entry).toLowerCase() === '.pdf')
+      .map((entry) => path.join(docsPath, entry));
 
-    const documents = await loader.load();
+    const documents = (
+      await Promise.all(pdfPaths.map((filePath) => new PDFLoader(filePath).load()))
+    ).flat();
 
     // Merge extracted metadata with documents based on filename
     documents.forEach((doc, index) => {

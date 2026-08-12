@@ -1,6 +1,6 @@
 'use server'
 
-import { createStreamableValue } from 'ai/rsc'
+import { createStreamableValue } from '@ai-sdk/rsc'
 import { EventSource } from 'extended-eventsource';
 
 type Message = {
