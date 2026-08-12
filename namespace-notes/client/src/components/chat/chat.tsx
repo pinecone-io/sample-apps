@@ -1,12 +1,13 @@
 // chat.tsx where the upload call is made
 
 'use client';
-import { useChat } from 'ai/react';
+import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
 import { ChatMessage } from './chat-message';
 import UploadButton from '../ui/upload-button';
 import { Workspace } from '@/lib/hooks/workspace-chat-context';
 import { PromptGrid } from '../ui/prompt-grid';
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Tooltip } from '../ui/tooltip';
 import FileCard from '../ui/file-card';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
@@ -27,9 +28,14 @@ const fetchFileUrls = async (workspaceId: string) => {
 };
 
 export default function Chat({ workspace }: { workspace: Workspace }) {
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-    body: { namespaceId: workspace.id },
-  });
+  const transport = useMemo(
+    () => new DefaultChatTransport({ api: '/api/chat', body: { namespaceId: workspace.id } }),
+    [workspace.id]
+  );
+  const { messages, sendMessage, status } = useChat({ transport });
+  const isLoading = status === 'submitted' || status === 'streaming';
+
+  const [input, setInput] = useState('');
 
   const [files, setFiles] = useState<FetchedFile[]>([]);
   const [fetchingFiles, setFetchingFiles] = useState(true);
@@ -45,25 +51,19 @@ export default function Chat({ workspace }: { workspace: Workspace }) {
   const [activePromptIndex, setActivePromptIndex] = useState<number>(0);
   const promptListRef = useRef<HTMLDivElement | null>(null);
 
-  const [shouldSubmit, setShouldSubmit] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
-
-  const handlePromptSubmit = (prompt: Prompt) => {
-    handleInputChange({ target: { value: prompt.content } } as ChangeEvent<HTMLInputElement>);
-    setShouldSubmit(true);
+  const submitMessage = () => {
+    const text = input.trim();
+    if (!text || isLoading) return;
+    sendMessage({ text });
+    setInput('');
   };
 
-  useEffect(() => {
-    if (shouldSubmit) {
-      const form = document.querySelector('form');
-      if (form) {
-        form.dispatchEvent(new Event('submit', { cancelable: true }));
-        form.requestSubmit();
-        setShouldSubmit(false);
-      }
-    }
-  }, [shouldSubmit]);
+  const handlePromptSubmit = (prompt: Prompt) => {
+    if (isLoading) return;
+    sendMessage({ text: prompt.content });
+  };
 
   const handleDeleteFile = async (documentId: string) => {
     console.log(`/api/files/?documentId=${documentId}&namespaceId=${workspace.id}`);
@@ -131,14 +131,14 @@ export default function Chat({ workspace }: { workspace: Workspace }) {
               handleSubmit={handlePromptSubmit}
             />) : (
 
-            <div className="text-gray-500 text-sm">{workspace.name === 'Empty Workspace' ? 'This is an example workspace with no uploaded documents for context. Try ask a question about \"Richard Feynman\" or any other workspace.' 
+            <div className="text-gray-500 text-sm">{workspace.name === 'Empty Workspace' ? 'This is an example workspace with no uploaded documents for context. Try ask a question about \"Richard Feynman\" or any other workspace.'
             : 'No documents in this workspace... upload below!'}</div>
           ))
           }
         </div>
       )}
 
-      <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => handleSubmit(e)} className="fixed bottom-0 w-full max-w-[300px] sm:max-w-[400px] md:max-w-2xl z-50 pb-10">
+      <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => { e.preventDefault(); submitMessage(); }} className="fixed bottom-0 w-full max-w-[300px] sm:max-w-[400px] md:max-w-2xl z-50 pb-10">
 
         <div className="flex flex-row items-center h-fit mb-4">
           <textarea
@@ -146,11 +146,11 @@ export default function Chat({ workspace }: { workspace: Workspace }) {
             value={input}
             placeholder={isLoading ? "Responding..." : "Chat with this workspace..."}
             disabled={isLoading}
-            onChange={handleInputChange}
+            onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e: any) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                handleSubmit(e);
+                submitMessage();
               }
             }}
             rows={1}
@@ -225,9 +225,9 @@ export default function Chat({ workspace }: { workspace: Workspace }) {
 
 /**
  * Extracts the documentId from a given file URL.
- * Assumes the URL pattern is: 
+ * Assumes the URL pattern is:
  * https://domain/[namespaceId]/[documentId]/[filename]
- * 
+ *
  * @param fileUrl - The URL of the file from which to extract the documentId.
  * @returns The extracted documentId or an empty string if the URL is invalid.
  */

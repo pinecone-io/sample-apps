@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, FormEvent, useRef, useCallback } from 'react';
-import { readStreamableValue } from 'ai/rsc';
+import { readStreamableValue } from '@ai-sdk/rsc';
 import { chat } from './actions';
 import ReactMarkdown from 'react-markdown';
 import AssistantFiles from './components/AssistantFiles';
