@@ -14,6 +14,7 @@ import { storageService } from "../utils/storage/storage";
 import { ServerStorage } from "../utils/storage/serverStorage";
 import { SpacesStorage } from "../utils/storage/spacesStorage";
 import { upload } from "../utils/multer";
+import { safeJoin, sanitizeSegment } from "../utils/storage/pathSafety";
 
 class DocumentsController {
   private documentModel: DocumentModel;
@@ -306,10 +307,12 @@ class DocumentsController {
       const fileUrl = storageService.constructFileUrl(fileKey);
 
       if (storageService instanceof ServerStorage) {
-        // Serve the file from the local filesystem
-        const filePath = path.join("uploads", fileKey);
+        // Serve the file from the local filesystem. safeJoin rejects any
+        // traversal in the user-supplied namespaceId/documentId and confines
+        // the path to the uploads directory.
+        const filePath = safeJoin("uploads", namespaceId, documentId);
         const files = fs.readdirSync(filePath);
-        const firstFile = files[0];
+        const firstFile = sanitizeSegment(files[0], "file name");
         const fileFullPath = path.join(filePath, firstFile);
         res.sendFile(fileFullPath, { root: "." });
       } else if (storageService instanceof SpacesStorage) {
