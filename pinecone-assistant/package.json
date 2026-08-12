@@ -11,7 +11,7 @@
   "dependencies": {
     "@ai-sdk/rsc": "^3.0.64",
     "extended-eventsource": "^1.4.9",
-    "next": "15.5.23",
+    "next": "16.3.0",
     "react": "^18",
     "react-dom": "^18",
     "react-markdown": "^9.0.1",
@@ -23,7 +23,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
-    "eslint-config-next": "15.5.23",
+    "eslint-config-next": "16.3.0",
     "postcss": "^8.5.26",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
