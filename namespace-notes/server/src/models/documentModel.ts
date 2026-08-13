@@ -51,7 +51,7 @@ export class DocumentModel {
     const batchSize = 200;
     for (let i = 0; i < vectors.length; i += batchSize) {
       const batch = vectors.slice(i, i + batchSize);
-      await namespace.upsert(batch);
+      await namespace.upsert({ records: batch });
     }
   }
 
