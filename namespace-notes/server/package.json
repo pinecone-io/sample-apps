@@ -14,9 +14,9 @@
   "license": "ISC",
   "dependencies": {
     "@airbnb/node-memwatch": "^2.0.0",
-    "@aws-sdk/client-s3": "^3.894.0",
-    "@aws-sdk/lib-storage": "^3.894.0",
-    "@aws-sdk/types": "^3.894.0",
+    "@aws-sdk/client-s3": "^3.1109.0",
+    "@aws-sdk/lib-storage": "^3.1109.0",
+    "@aws-sdk/types": "^3.974.3",
     "@pinecone-database/pinecone": "^2.1.0",
     "@types/multer": "^1.4.11",
     "@vercel/blob": "^2.4.0",
