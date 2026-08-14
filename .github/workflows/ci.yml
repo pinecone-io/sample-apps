@@ -43,7 +43,7 @@ jobs:
       VOYAGE_API_KEY: ci-dummy-voyage
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
       # Committed lockfile predates a langchain peer-dep bump; --legacy-peer-deps
@@ -62,7 +62,7 @@ jobs:
         working-directory: namespace-notes/client
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
       - run: npm install --legacy-peer-deps
@@ -81,7 +81,7 @@ jobs:
       PORT: "4001"
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
       # `npm run build` runs `npm install --include=dev && tsc` per the repo.
@@ -108,7 +108,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: 9
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
@@ -127,7 +127,7 @@ jobs:
         working-directory: shop-the-look
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
       - run: npm ci
