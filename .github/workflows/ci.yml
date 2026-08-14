@@ -29,7 +29,7 @@ env:
   # Dummy, non-secret placeholders. The Pinecone clients only require the key to
   # be a non-empty string at construction; no live call is made in these checks.
   PINECONE_API_KEY: pclocal-ci-dummy-key
-  NODE_VERSION: "20"
+  NODE_VERSION: "22"
 
 jobs:
   legal-semantic-search:
