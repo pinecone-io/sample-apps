@@ -42,7 +42,7 @@ jobs:
       PINECONE_INDEX: ci-dummy-index
       VOYAGE_API_KEY: ci-dummy-voyage
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -61,7 +61,7 @@ jobs:
       run:
         working-directory: namespace-notes/client
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -80,7 +80,7 @@ jobs:
     env:
       PORT: "4001"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -104,7 +104,7 @@ jobs:
       # run on optional native build scripts (sharp) being blocked in CI.
       NPM_CONFIG_VERIFY_DEPS_BEFORE_RUN: "false"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v4
         with:
           version: 9
@@ -126,7 +126,7 @@ jobs:
       run:
         working-directory: shop-the-look
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -143,7 +143,7 @@ jobs:
       run:
         working-directory: shop-the-look
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
